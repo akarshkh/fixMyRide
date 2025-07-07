@@ -13,11 +13,10 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // MongoDB Connection
 mongoose.connect(
-  "mongodb+srv://khandelwalakarshak:mJpMfI2SiodRF2HT@cluster0.a4xel.mongodb.net/two-wheeler-crm?retryWrites=true&w=majority&appName=Cluster0",
-  {
+  (process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  },
+  })
 )
 
 const db = mongoose.connection
