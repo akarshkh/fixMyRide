@@ -26,8 +26,8 @@ app.use((req, res, next) => {
 })
 
 // MongoDB Connection with better error handling
-const MONGODB_URI =
-  "mongodb+srv://khandelwalakarshak:mJpMfI2SiodRF2HT@cluster0.a4xel.mongodb.net/two-wheeler-crm?retryWrites=true&w=majority&appName=Cluster0"
+const MONGODB_URI = process.env.MONGODB_URI
+
 
 console.log("🔄 Attempting to connect to MongoDB...")
 

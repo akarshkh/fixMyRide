@@ -913,6 +913,7 @@ app.all('/api/requests*', (req, res, next) => {
 // Modular Routes
 app.use('/api/customers', require('./routes/customers'))
 app.use('/api/service-requests', require('./routes/serviceRequests'))
+app.use('/api/customer-analytics', require('./routes/customerAnalytics'))
 app.use('/api/settings', require('./routes/settings'))
 
 // Health check route

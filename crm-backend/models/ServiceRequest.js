@@ -48,6 +48,15 @@ const serviceRequestSchema = new mongoose.Schema(
       enum: ["Pending", "In Progress", "Completed", "Cancelled"],
       default: "Pending",
     },
+    priority: {
+      type: String,
+      enum: ["Low", "Medium", "Urgent"],
+      default: "Medium",
+    },
+    estimatedCompletionTime: {
+      type: Number, // in hours
+      default: 24,
+    },
     cost: {
       type: Number,
       required: true,

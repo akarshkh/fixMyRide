@@ -12,9 +12,12 @@ interface ServiceRequest {
   vehicle: string
   serviceType: string
   issue: string
-  status: "Pending" | "Completed"
+  status: "Pending" | "In Progress" | "Completed" | "Cancelled"
+  priority: "Low" | "Medium" | "Urgent"
+  estimatedCompletionTime: number // in hours
   cost: number
   createdAt?: string
+  completedAt?: string
 }
 
 export default function ServiceRequests() {
@@ -23,6 +26,7 @@ export default function ServiceRequests() {
   const [showForm, setShowForm] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("All")
+  const [priorityFilter, setPriorityFilter] = useState("All")
   const [isLoading, setIsLoading] = useState(false)
   const [editingRequest, setEditingRequest] = useState<ServiceRequest | null>(null)
   const [formData, setFormData] = useState<ServiceRequest>({
@@ -32,8 +36,12 @@ export default function ServiceRequests() {
     serviceType: "General Maintenance",
     issue: "",
     status: "Pending",
+    priority: "Medium",
+    estimatedCompletionTime: 24,
     cost: 0,
   })
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
+  const [feedbackRequestId, setFeedbackRequestId] = useState<string | null>(null)
 
   // Helper function to format currency in Indian Rupees
   const formatCurrency = (amount: number) => {
@@ -50,7 +58,7 @@ export default function ServiceRequests() {
   const fetchServiceRequests = async () => {
     try {
       const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/requests", {
+      const response = await fetch("http://localhost:5000/api/service-requests", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -59,7 +67,15 @@ export default function ServiceRequests() {
 
       if (response.ok) {
         const data = await response.json()
-        setRequests(data)
+        // Handle both direct array and paginated response
+        if (Array.isArray(data)) {
+          setRequests(data)
+        } else if (data.requests && Array.isArray(data.requests)) {
+          setRequests(data.requests)
+        } else {
+          console.error("Expected requests array, got:", data)
+          setRequests([])
+        }
       } else {
         console.error("Failed to fetch service requests")
       }
@@ -75,10 +91,16 @@ export default function ServiceRequests() {
     try {
       const token = localStorage.getItem("crm_token")
       const url = editingRequest 
-        ? `http://localhost:5000/api/requests/${editingRequest._id}`
-        : "http://localhost:5000/api/requests"
+        ? `http://localhost:5000/api/service-requests/${editingRequest._id}`
+        : "http://localhost:5000/api/service-requests"
       
       const method = editingRequest ? "PUT" : "POST"
+      
+      // Debug logging
+      console.log("Form Data being submitted:", formData)
+      console.log("Priority being sent:", formData.priority)
+      console.log("Method:", method)
+      console.log("URL:", url)
 
       const response = await fetch(url, {
         method,
@@ -91,6 +113,9 @@ export default function ServiceRequests() {
 
       if (response.ok) {
         const savedRequest = await response.json()
+        console.log("Server response:", savedRequest)
+        console.log("Saved priority:", savedRequest.priority)
+        
         if (editingRequest) {
           setRequests(requests.map(r => r._id === savedRequest._id ? savedRequest : r))
         } else {
@@ -99,8 +124,9 @@ export default function ServiceRequests() {
         resetForm()
       } else {
         const errorData = await response.json()
-        console.error("Failed to save service request:", errorData.error)
-        alert("Failed to save service request: " + errorData.error)
+        console.error("Failed to save service request:", errorData)
+        console.error("Response status:", response.status)
+        alert("Failed to save service request: " + (errorData.error || 'Unknown error'))
       }
     } catch (error) {
       console.error("Error saving service request:", error)
@@ -118,6 +144,8 @@ export default function ServiceRequests() {
       serviceType: "General Maintenance",
       issue: "",
       status: "Pending",
+      priority: "Medium",
+      estimatedCompletionTime: 24,
       cost: 0,
     })
     setShowForm(false)
@@ -143,7 +171,7 @@ export default function ServiceRequests() {
 
     try {
       const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
+      const response = await fetch(`http://localhost:5000/api/service-requests/${requestId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -168,7 +196,7 @@ export default function ServiceRequests() {
     const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "cost" ? Number(value) : value,
+      [name]: name === "cost" || name === "estimatedCompletionTime" ? Number(value) : value,
     }))
   }
 
@@ -192,7 +220,19 @@ export default function ServiceRequests() {
       request.serviceType.toLowerCase().includes(searchTerm.toLowerCase()) ||
       request.issue.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === "All" || request.status === statusFilter
-    return matchesSearch && matchesStatus
+    const matchesPriority = priorityFilter === "All" || request.priority === priorityFilter
+    
+    // Debug logging
+    if (priorityFilter !== "All") {
+      console.log("Debug - Request:", {
+        customerName: request.customerName,
+        priority: request.priority,
+        priorityFilter,
+        matchesPriority
+      })
+    }
+    
+    return matchesSearch && matchesStatus && matchesPriority
   })
 
   return (
@@ -228,7 +268,19 @@ export default function ServiceRequests() {
           >
             <option value="All">All Status</option>
             <option value="Pending">Pending</option>
+            <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+          <select
+            value={priorityFilter}
+            onChange={(e) => setPriorityFilter(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="All">All Priority</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="Urgent">Urgent</option>
           </select>
         </div>
       </div>
@@ -252,6 +304,9 @@ export default function ServiceRequests() {
                   Issue
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Priority
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
@@ -264,8 +319,8 @@ export default function ServiceRequests() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRequests.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
-                    {searchTerm || statusFilter !== "All" 
+                  <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
+                    {searchTerm || statusFilter !== "All" || priorityFilter !== "All"
                       ? "No service requests found matching your filters." 
                       : "No service requests found. Create your first service request to get started."
                     }
@@ -285,6 +340,16 @@ export default function ServiceRequests() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
                       {request.issue}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs rounded-full font-semibold ${
+                        request.priority === 'Urgent' ? 'bg-red-100 text-red-800' :
+                        request.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                        request.priority === 'Low' ? 'bg-gray-100 text-gray-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {request.priority || 'Medium'}
+                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs rounded-full font-semibold ${getStatusColor(request.status)}`}>
@@ -409,6 +474,33 @@ export default function ServiceRequests() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+                  <select
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Urgent">Urgent</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Est. Time (hours)</label>
+                  <input
+                    type="number"
+                    name="estimatedCompletionTime"
+                    value={formData.estimatedCompletionTime}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="168"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
                 <select
@@ -418,7 +510,9 @@ export default function ServiceRequests() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
                   <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
                 </select>
               </div>
               <div>

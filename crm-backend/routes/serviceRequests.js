@@ -7,12 +7,17 @@ const { authenticateToken, requireRoles } = require('../middleware/auth');
 // GET /api/service-requests - Get all service requests
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { status, page = 1, limit = 50 } = req.query;
+    const { status, priority, page = 1, limit = 50 } = req.query;
     let query = {};
     
     // Filter by status if provided
     if (status && status !== 'all') {
       query.status = status;
+    }
+    
+    // Filter by priority if provided
+    if (priority && priority !== 'all') {
+      query.priority = priority;
     }
     
     const skip = (parseInt(page) - 1) * parseInt(limit);
@@ -178,6 +183,10 @@ router.put('/:id', authenticateToken, async (req, res) => {
   }
   try {
     const updates = req.body;
+    console.log("Received updates:", updates); // Debugging line
+    if (updates.priority) {
+      console.log("Updating priority:", updates.priority); // Debugging priority
+    }
     
     // If status is being changed to 'Completed', update customer's total spend
     if (updates.status === 'Completed') {

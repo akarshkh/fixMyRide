@@ -3,23 +3,26 @@
 import { BarChart3, Users, Wrench, FileText, Package, UserCog, Settings } from "lucide-react"
 import { useAuth } from "./auth-context"
 import Logo from "./Logo"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 interface SidebarProps {
   activeSection: string
-  setActiveSection: (section: string) => void
+  setActiveSection?: (section: string) => void
 }
 
 export default function Sidebar({ activeSection, setActiveSection }: SidebarProps) {
   const { user } = useAuth()
+  const pathname = usePathname()
 
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: BarChart3, roles: ["admin", "manager", "staff"] },
-    { id: "customers", label: "Customers", icon: Users, roles: ["admin", "manager", "staff"] },
-    { id: "service-requests", label: "Service Requests", icon: Wrench, roles: ["staff"] },
-    { id: "reports", label: "Reports", icon: FileText, roles: ["admin", "manager"] },
-    { id: "inventory", label: "Inventory", icon: Package, roles: ["admin", "manager", "staff"] },
-    { id: "user-management", label: "User Management", icon: UserCog, roles: ["admin", "manager"] },
-    { id: "settings", label: "Settings", icon: Settings, roles: ["admin"] },
+    { id: "dashboard", label: "Dashboard", icon: BarChart3, href: "/", roles: ["admin", "manager", "staff"] },
+    { id: "customers", label: "Customers", icon: Users, href: "/customers", roles: ["admin", "manager", "staff"] },
+    { id: "service-requests", label: "Service Requests", icon: Wrench, href: "/service-requests", roles: ["staff"] },
+    { id: "reports", label: "Reports", icon: FileText, href: "/reports", roles: ["admin", "manager"] },
+    { id: "inventory", label: "Inventory", icon: Package, href: "/inventory", roles: ["admin", "manager", "staff"] },
+    { id: "user-management", label: "User Management", icon: UserCog, href: "/user-management", roles: ["admin", "manager"] },
+    { id: "settings", label: "Settings", icon: Settings, href: "/settings", roles: ["admin"] },
   ]
 
   // Filter menu items based on user role
@@ -35,17 +38,18 @@ export default function Sidebar({ activeSection, setActiveSection }: SidebarProp
       <nav className="mt-6">
         {filteredMenuItems.map((item) => {
           const Icon = item.icon
+          const isActive = pathname === item.href || (pathname === "/" && item.id === "dashboard")
           return (
-            <button
+            <Link
               key={item.id}
-              onClick={() => setActiveSection(item.id)}
+              href={item.href}
               className={`w-full flex items-center space-x-3 px-6 py-3 text-left hover:bg-blue-800 transition-colors ${
-                activeSection === item.id ? "bg-blue-800 border-r-4 border-blue-400" : ""
+                isActive ? "bg-blue-800 border-r-4 border-blue-400" : ""
               }`}
             >
               <Icon className="h-5 w-5" />
               <span>{item.label}</span>
-            </button>
+            </Link>
           )
         })}
       </nav>
