@@ -291,27 +291,27 @@ export default function ServiceRequests() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Vehicle
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Service Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Issue
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Priority
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cost</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Cost</th>
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -319,7 +319,7 @@ export default function ServiceRequests() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRequests.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-6 py-8 text-center text-gray-500">
+                  <td colSpan={9} className="px-8 py-8 text-center text-base text-gray-500">
                     {searchTerm || statusFilter !== "All" || priorityFilter !== "All"
                       ? "No service requests found matching your filters." 
                       : "No service requests found. Create your first service request to get started."
@@ -329,20 +329,20 @@ export default function ServiceRequests() {
               ) : (
                 filteredRequests.map((request) => (
                   <tr key={request._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-8 py-5 whitespace-nowrap text-base font-medium text-gray-900">
                       {request.customerName}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
                       {request.vehicle}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
                       {request.serviceType}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
+                    <td className="px-8 py-5 text-base text-gray-500 max-w-xs truncate">
                       {request.issue}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs rounded-full font-semibold ${
+                    <td className="px-8 py-5 whitespace-nowrap">
+                      <span className={`px-3 py-1 text-sm rounded-full font-semibold ${
                         request.priority === 'Urgent' ? 'bg-red-100 text-red-800' :
                         request.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
                         request.priority === 'Low' ? 'bg-gray-100 text-gray-800' :
@@ -351,33 +351,33 @@ export default function ServiceRequests() {
                         {request.priority || 'Medium'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs rounded-full font-semibold ${getStatusColor(request.status)}`}>
+                    <td className="px-8 py-5 whitespace-nowrap">
+                      <span className={`px-3 py-1 text-sm rounded-full font-semibold ${getStatusColor(request.status)}`}>
                         {request.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                    <td className="px-8 py-5 whitespace-nowrap text-base font-medium text-green-600">
                       {formatCurrency(request.cost)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
                       {new Date(request.createdAt || "").toLocaleDateString("en-IN")}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex space-x-2">
+                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
+                      <div className="flex space-x-3">
                         <button 
                           onClick={() => handleEdit(request)}
-                          className="text-blue-600 hover:text-blue-900"
+                          className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-100 rounded-md transition-colors"
                           title="Edit Request"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-5 w-5" />
                         </button>
                         {["admin", "manager"].includes(user?.role || "") && (
                           <button 
                             onClick={() => handleDelete(request._id!)}
-                            className="text-red-600 hover:text-red-900"
+                            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-md transition-colors"
                             title="Delete Request"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-5 w-5" />
                           </button>
                         )}
                       </div>

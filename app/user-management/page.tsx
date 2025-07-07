@@ -19,8 +19,8 @@ function UserManagementPageContent() {
       <Sidebar activeSection="user-management" setActiveSection={() => {}} />
       <div className="flex-1 flex flex-col ml-64">
         <Header />
-        <main className="flex-1 p-6 mt-20">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 p-8 mt-20">
+          <div className="w-full">
             <UserManagement />
           </div>
         </main>

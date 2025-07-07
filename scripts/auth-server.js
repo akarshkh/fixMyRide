@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 // MongoDB Connection with better error handling
 const MONGODB_URI = process.env.MONGODB_URI
 
-
+a
 console.log("🔄 Attempting to connect to MongoDB...")
 
 mongoose.connect(MONGODB_URI, {
