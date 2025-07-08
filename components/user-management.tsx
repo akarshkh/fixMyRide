@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Search, Edit, Trash2, X, Shield, User, Crown } from "lucide-react"
+import { Plus, Search, Edit, Trash2, X, Shield, User, Crown, UserPlus, EyeOff, Eye } from "lucide-react"
 import { useAuth } from "./auth-context"
 import { apiRequest } from "../lib/api"
 
