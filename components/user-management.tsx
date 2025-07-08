@@ -91,27 +91,23 @@ export default function UserManagement() {
       
       if (editingUser) {
         // Use existing edit endpoint
-        url = `http://localhost:5000/api/admin/users/${editingUser._id}`
+        url = `/api/admin/users/${editingUser._id}`
       } else {
         // Use role-based creation endpoints
         if (formData.role === "manager") {
-          url = "http://localhost:5000/api/admin/create-manager"
+          url = "/api/admin/create-manager"
         } else if (formData.role === "staff") {
-          url = "http://localhost:5000/api/admin/create-staff"
+          url = "/api/admin/create-staff"
         } else {
           // Fallback to general user creation for admin role
-          url = "http://localhost:5000/api/admin/users"
+          url = "/api/admin/users"
         }
       }
       
       const method = editingUser ? "PUT" : "POST"
 
-      const response = await fetch(url, {
+      const response = await apiRequest(url, {
         method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       })
 
@@ -167,11 +163,8 @@ export default function UserManagement() {
 
     try {
       const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/admin/users/${userId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await apiRequest(`/api/admin/users/${userId}`, {
+        method: "DELETE"
       })
 
       if (response.ok) {
@@ -191,12 +184,8 @@ export default function UserManagement() {
   const toggleUserStatus = async (userId: string, currentStatus: boolean) => {
     try {
       const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/admin/users/${userId}/toggle-status`, {
+      const response = await apiRequest(`/api/admin/users/${userId}/toggle-status`, {
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ isActive: !currentStatus }),
       })
 

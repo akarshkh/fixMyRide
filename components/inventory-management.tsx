@@ -35,12 +35,7 @@ export default function InventoryManagement() {
   const fetchItems = async () => {
     try {
       const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/inventory", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await apiRequest("/api/inventory")
 
       if (response.ok) {
         const data = await response.json()
@@ -60,17 +55,13 @@ export default function InventoryManagement() {
     try {
       const token = localStorage.getItem("crm_token")
       const url = editingItem 
-        ? `http://localhost:5000/api/inventory/${editingItem._id}`
-        : "http://localhost:5000/api/inventory"
+        ? `/api/inventory/${editingItem._id}`
+        : "/api/inventory"
       
       const method = editingItem ? "PUT" : "POST"
 
-      const response = await fetch(url, {
+      const response = await apiRequest(url, {
         method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       })
 
