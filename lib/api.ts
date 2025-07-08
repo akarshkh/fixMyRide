@@ -10,9 +10,9 @@ const getApiBaseUrl = () => {
     });
   }
   
-  // If we're on Vercel (production), force the production URL
+  // If we're on Vercel (production), use the current domain with /api prefix
   if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
-    return 'https://fixmyride-crm.onrender.com';
+    return window.location.origin;
   }
   
   // Otherwise use environment variable or localhost fallback
