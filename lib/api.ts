@@ -12,7 +12,7 @@ const getApiBaseUrl = () => {
   
   // If we're in production (on Vercel), use Render backend
   if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
-    return 'https://fixmyride-backend.onrender.com';
+    return 'https://fixmyride-crm.onrender.com';
   }
   
   // For development, use environment variable or localhost fallback
