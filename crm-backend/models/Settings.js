@@ -40,82 +40,37 @@ const settingsSchema = new mongoose.Schema({
   // Notification Settings
   emailNotifications: {
     newCustomer: { type: Boolean, default: true },
-    newServiceRequest: { type: Boolean, default: true },
-    paymentReceived: { type: Boolean, default: true },
     serviceCompleted: { type: Boolean, default: true },
-    appointmentReminder: { type: Boolean, default: true }
+    appointmentReminders: { type: Boolean, default: true }
   },
   
-  // Service Settings
-  defaultWarrantyPeriod: {
-    type: Number,
-    default: 30 // days
+  // Service Settings  
+  serviceSettings: {
+    defaultServiceDuration: {
+      type: Number,
+      default: 60 // minutes
+    },
+    allowOnlineBooking: {
+      type: Boolean,
+      default: true
+    },
+    requireApproval: {
+      type: Boolean,
+      default: false
+    }
   },
   
   // Appointment Settings
   workingHours: {
-    monday: { start: String, end: String, isOpen: Boolean },
-    tuesday: { start: String, end: String, isOpen: Boolean },
-    wednesday: { start: String, end: String, isOpen: Boolean },
-    thursday: { start: String, end: String, isOpen: Boolean },
-    friday: { start: String, end: String, isOpen: Boolean },
-    saturday: { start: String, end: String, isOpen: Boolean },
-    sunday: { start: String, end: String, isOpen: Boolean }
+    monday: { open: String, close: String, isOpen: Boolean },
+    tuesday: { open: String, close: String, isOpen: Boolean },
+    wednesday: { open: String, close: String, isOpen: Boolean },
+    thursday: { open: String, close: String, isOpen: Boolean },
+    friday: { open: String, close: String, isOpen: Boolean },
+    saturday: { open: String, close: String, isOpen: Boolean },
+    sunday: { open: String, close: String, isOpen: Boolean }
   },
   
-  // System Settings
-  theme: {
-    type: String,
-    default: 'light',
-    enum: ['light', 'dark', 'system']
-  },
-  dateFormat: {
-    type: String,
-    default: 'DD/MM/YYYY',
-    enum: ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD']
-  },
-  timeFormat: {
-    type: String,
-    default: '24h',
-    enum: ['12h', '24h']
-  },
-  
-  // Backup Settings
-  autoBackup: {
-    type: Boolean,
-    default: true
-  },
-  backupFrequency: {
-    type: String,
-    default: 'daily',
-    enum: ['daily', 'weekly', 'monthly']
-  },
-  
-  // Security Settings
-  sessionTimeout: {
-    type: Number,
-    default: 30 // minutes
-  },
-  passwordPolicy: {
-    minLength: { type: Number, default: 8 },
-    requireUppercase: { type: Boolean, default: true },
-    requireNumbers: { type: Boolean, default: true },
-    requireSymbols: { type: Boolean, default: false }
-  },
-  
-  // Invoice Settings
-  invoicePrefix: {
-    type: String,
-    default: 'FMR'
-  },
-  invoiceNumberStart: {
-    type: Number,
-    default: 1000
-  },
-  invoiceTerms: {
-    type: String,
-    default: 'Payment due within 30 days'
-  },
   
   // Created/Updated tracking
   createdAt: {
@@ -132,13 +87,13 @@ const settingsSchema = new mongoose.Schema({
 settingsSchema.pre('save', function(next) {
   if (this.isNew && !this.workingHours.monday) {
     this.workingHours = {
-      monday: { start: '09:00', end: '18:00', isOpen: true },
-      tuesday: { start: '09:00', end: '18:00', isOpen: true },
-      wednesday: { start: '09:00', end: '18:00', isOpen: true },
-      thursday: { start: '09:00', end: '18:00', isOpen: true },
-      friday: { start: '09:00', end: '18:00', isOpen: true },
-      saturday: { start: '09:00', end: '17:00', isOpen: true },
-      sunday: { start: '10:00', end: '16:00', isOpen: false }
+      monday: { open: '09:00', close: '18:00', isOpen: true },
+      tuesday: { open: '09:00', close: '18:00', isOpen: true },
+      wednesday: { open: '09:00', close: '18:00', isOpen: true },
+      thursday: { open: '09:00', close: '18:00', isOpen: true },
+      friday: { open: '09:00', close: '18:00', isOpen: true },
+      saturday: { open: '09:00', close: '17:00', isOpen: true },
+      sunday: { open: '10:00', close: '16:00', isOpen: false }
     };
   }
   this.updatedAt = Date.now();
