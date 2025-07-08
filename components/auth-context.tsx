@@ -13,13 +13,6 @@ interface User {
 interface AuthContextType {
   user: User | null
   login: (credentials: { username: string; password: string }) => Promise<boolean>
-  signup: (userData: {
-    username: string
-    password: string
-    name: string
-    email: string
-    role: string
-  }) => Promise<boolean>
   logout: () => void
   isLoading: boolean
   error: string | null
@@ -126,90 +119,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
-  const signup = async (userData: {
-    username: string
-    password: string
-    name: string
-    email: string
-    role: string
-  }): Promise<boolean> => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      console.log("📝 Starting signup process...")
-
-      // First, test server connectivity
-      console.log("🔍 Testing server connectivity...")
-      try {
-        const healthResponse = await fetch(`${API_BASE_URL}/api/health`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-
-        if (!healthResponse.ok) {
-          throw new Error("Server health check failed")
-        }
-        console.log("✅ Server is reachable")
-      } catch (healthError) {
-        console.error("❌ Server connectivity test failed:", healthError)
-        setError("Cannot connect to server. Please check your connection and try again.")
-        setIsLoading(false)
-        return false
-      }
-
-      // Proceed with signup
-      console.log("📝 Sending signup request...")
-      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: userData.username.trim(),
-          password: userData.password,
-          name: userData.name.trim(),
-          email: userData.email.trim().toLowerCase(),
-          role: userData.role,
-        }),
-      })
-
-      console.log("📡 Signup response status:", response.status)
-
-      let data
-      try {
-        data = await response.json()
-        console.log("📡 Signup response data:", data)
-      } catch (parseError) {
-        console.error("❌ Failed to parse response:", parseError)
-        setError("Invalid response from server. Please try again.")
-        setIsLoading(false)
-        return false
-      }
-
-      if (response.ok && data.success) {
-        console.log("✅ Signup successful")
-        setIsLoading(false)
-        return true
-      } else {
-        console.log("❌ Signup failed:", data.error)
-        setError(data.error || "Signup failed. Please try again.")
-        setIsLoading(false)
-        return false
-      }
-    } catch (error) {
-      console.error("❌ Signup error:", error)
-      if (error.name === "TypeError" && error.message.includes("fetch")) {
-        setError("Cannot connect to server. Please check your connection and try again.")
-      } else {
-        setError("Signup failed. Please check your connection and try again.")
-      }
-      setIsLoading(false)
-      return false
-    }
-  }
+  // Note: Signup functionality removed as backend endpoint doesn't exist
+  // User creation should be handled through admin panel in production
 
   const logout = () => {
     setUser(null)
@@ -219,6 +130,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, isLoading, error }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, login, logout, isLoading, error }}>{children}</AuthContext.Provider>
   )
 }

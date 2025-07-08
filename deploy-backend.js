@@ -36,8 +36,7 @@ async function main() {
   console.log('🚀 Backend Deployment Health Check\n');
   
   const backends = [
-    { url: 'https://fixmyride-backend.onrender.com', name: 'Render' },
-    { url: 'https://fix-my-ride-b78em6of7-khandelwalakarshak-5961s-projects.vercel.app/api/health', name: 'Vercel' }
+    { url: 'https://fixmyride-crm.onrender.com/api/health', name: 'Render' }
   ];
   
   const results = await Promise.all(
