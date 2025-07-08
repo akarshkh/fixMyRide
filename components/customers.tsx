@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { Plus, Search, Edit, Trash2, X, TrendingUp, History, Star, DollarSign } from "lucide-react"
 import { useAuth } from "./auth-context"
+import { apiRequest } from "../lib/api"
 
 interface Customer {
   _id?: string

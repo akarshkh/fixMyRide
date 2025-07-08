@@ -47,6 +47,16 @@ app.use((req, res, next) => {
   next()
 })
 
+// Root health endpoint for Render
+app.get('/', (req, res) => {
+  res.json({
+    status: "OK",
+    message: "Fix My Ride Backend API is running",
+    timestamp: new Date().toISOString(),
+    environment: "render"
+  })
+})
+
 // MongoDB Connection with FIXED options
 // SECURITY FIX: Use environment variables for sensitive data
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/two-wheeler-crm" // Local fallback
