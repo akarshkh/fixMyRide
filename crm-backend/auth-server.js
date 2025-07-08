@@ -14,7 +14,7 @@ const app = express()
 const server = http.createServer(app)
 const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://fix-my-ride-bfo2azv8q-khandelwalakarshak-5961s-projects.vercel.app", /\.vercel\.app$/],
     methods: ["GET", "POST"]
   }
 })
@@ -24,7 +24,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-producti
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://fix-my-ride-bfo2azv8q-khandelwalakarshak-5961s-projects.vercel.app", /\.vercel\.app$/],
     credentials: true,
   }),
 )
@@ -52,6 +52,11 @@ app.use((req, res, next) => {
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/two-wheeler-crm" // Local fallback
 
 console.log("🔄 Attempting to connect to MongoDB...")
+console.log("🔍 Environment check:")
+console.log("   NODE_ENV:", process.env.NODE_ENV)
+console.log("   PORT:", process.env.PORT)
+console.log("   MONGODB_URI present:", !!process.env.MONGODB_URI)
+console.log("   JWT_SECRET present:", !!process.env.JWT_SECRET)
 
 // FIXED: Updated MongoDB connection options for Atlas
 mongoose.connect(MONGODB_URI, {
@@ -965,21 +970,24 @@ app.use("*", (req, res) => {
   })
 })
 
-server.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`)
-  console.log(`📍 Server URL: http://localhost:${PORT}`)
-  console.log("🔐 Default admin credentials:")
-  console.log("   Username: admin, Password: admin123")
-  console.log("   Username: manager, Password: manager123")
-  console.log("   Username: staff, Password: staff123")
-  console.log("📝 Available endpoints:")
-  console.log("   POST /api/auth/login - User login")
-  console.log("   POST /api/admin/create-manager - Create manager (Admin only)")
-  console.log("   POST /api/admin/create-staff - Create staff (Admin/Manager)")
-  console.log("   GET /api/health - Health check")
-  console.log("   GET /test - Test endpoint")
-  console.log("   GET /api/debug/users - Debug users (TEMPORARY)")
-  console.log("🔌 WebSocket server enabled for real-time updates")
-})
+// Only listen when not in serverless environment (like Vercel)
+if (process.env.VERCEL !== '1') {
+  server.listen(PORT, () => {
+    console.log(`🚀 Server is running on port ${PORT}`)
+    console.log(`📍 Server URL: http://localhost:${PORT}`)
+    console.log("🔐 Default admin credentials:")
+    console.log("   Username: admin, Password: admin123")
+    console.log("   Username: manager, Password: manager123")
+    console.log("   Username: staff, Password: staff123")
+    console.log("📝 Available endpoints:")
+    console.log("   POST /api/auth/login - User login")
+    console.log("   POST /api/admin/create-manager - Create manager (Admin only)")
+    console.log("   POST /api/admin/create-staff - Create staff (Admin/Manager)")
+    console.log("   GET /api/health - Health check")
+    console.log("   GET /test - Test endpoint")
+    console.log("   GET /api/debug/users - Debug users (TEMPORARY)")
+    console.log("🔌 WebSocket server enabled for real-time updates")
+  })
+}
 
 module.exports = app

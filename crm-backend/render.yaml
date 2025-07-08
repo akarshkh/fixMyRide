@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: fixmyride-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        value: mongodb+srv://khandelwalakarshak:mJpMfI2SiodRF2HT@cluster0.a4xel.mongodb.net/two-wheeler-crm?retryWrites=true&w=majority&appName=Cluster0
+      - key: JWT_SECRET
+        value: my-sercret-key
+      - key: PORT
+        value: 10000

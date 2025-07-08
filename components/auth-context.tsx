@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { API_BASE_URL } from "../lib/api"
 
 interface User {
   id: string
@@ -65,7 +66,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       console.log("🔐 Starting login process...")
 
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -116,7 +117,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error("❌ Login error:", error)
       if (error.name === "TypeError" && error.message.includes("fetch")) {
-        setError("Cannot connect to server. Please ensure the backend server is running on port 5000.")
+        setError("Cannot connect to server. Please check your connection and try again.")
       } else {
         setError("Login failed. Please check your connection and try again.")
       }
@@ -141,7 +142,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // First, test server connectivity
       console.log("🔍 Testing server connectivity...")
       try {
-        const healthResponse = await fetch("http://localhost:5000/api/health", {
+        const healthResponse = await fetch(`${API_BASE_URL}/api/health`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -154,14 +155,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.log("✅ Server is reachable")
       } catch (healthError) {
         console.error("❌ Server connectivity test failed:", healthError)
-        setError("Cannot connect to server. Please ensure the backend server is running on port 5000.")
+        setError("Cannot connect to server. Please check your connection and try again.")
         setIsLoading(false)
         return false
       }
 
       // Proceed with signup
       console.log("📝 Sending signup request...")
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -201,7 +202,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error("❌ Signup error:", error)
       if (error.name === "TypeError" && error.message.includes("fetch")) {
-        setError("Cannot connect to server. Please ensure the backend server is running on port 5000.")
+        setError("Cannot connect to server. Please check your connection and try again.")
       } else {
         setError("Signup failed. Please check your connection and try again.")
       }

@@ -8,6 +8,7 @@
     "dev": "nodemon auth-server.js",
     "dev-auth": "nodemon auth-server.js",
     "auth-server": "node auth-server.js",
+    "vercel-build": "echo 'Building for Vercel serverless functions'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "check-connection": "node -e \"const mongoose = require('mongoose'); mongoose.connect('mongodb+srv://khandelwalakarshak:mJpMfI2SiodRF2HT@cluster0.a4xel.mongodb.net/two-wheeler-crm?retryWrites=true&w=majority&appName=Cluster0').then(() => { console.log('✅ MongoDB connection successful'); process.exit(0); }).catch(err => { console.error('❌ MongoDB connection failed:', err.message); process.exit(1); });\""
   },
