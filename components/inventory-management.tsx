@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { Package, Plus, Search, Edit, Trash2, X } from "lucide-react"
 import { useAuth } from "./auth-context"
+import { apiRequest } from "../lib/api"
 
 interface InventoryItem {
   _id?: string
@@ -116,12 +117,8 @@ export default function InventoryManagement() {
     if (!window.confirm("Are you sure you want to delete this item? This action cannot be undone.")) return
 
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/inventory/${itemId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await apiRequest(`/api/inventory/${itemId}`, {
+        method: "DELETE"
       })
 
       if (response.ok) {

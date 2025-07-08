@@ -2,6 +2,7 @@
 
 import { Users, Clock, Calendar, TrendingUp } from "lucide-react"
 import { useState, useEffect } from "react"
+import { API_BASE_URL, getAuthHeaders } from "../lib/api"
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -26,12 +27,8 @@ export default function Dashboard() {
 
   const fetchDashboardStats = async () => {
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/dashboard/stats", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`, {
+        headers: getAuthHeaders(),
       })
 
       if (response.ok) {

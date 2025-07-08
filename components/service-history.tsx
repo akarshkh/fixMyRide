@@ -23,15 +23,9 @@ export default function ServiceHistory({ customerId }: ServiceHistoryProps) {
     fetchServiceHistory()
   }, [customerId])
 
-  const fetchServiceHistory = async () => {
+  const fetchServiceHistory = async () => {
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/customers/${customerId}/history`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await apiRequest(`/api/customers/${customerId}/history`)
 
       if (response.ok) {
         const data = await response.json()

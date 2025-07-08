@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { Plus, Search, Eye, Edit, Trash2, X } from "lucide-react"
 import { useAuth } from "./auth-context"
+import { apiRequest } from "../lib/api"
 
 interface ServiceRequest {
   _id?: string
@@ -55,16 +56,11 @@ export default function ServiceRequests() {
     fetchServiceRequests()
   }, [])
 
+
   const fetchServiceRequests = async () => {
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/service-requests", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
-
+      const response = await apiRequest("/api/service-requests")
+      
       if (response.ok) {
         const data = await response.json()
         // Handle both direct array and paginated response
@@ -89,25 +85,14 @@ export default function ServiceRequests() {
     setIsLoading(true)
 
     try {
-      const token = localStorage.getItem("crm_token")
       const url = editingRequest 
-        ? `http://localhost:5000/api/service-requests/${editingRequest._id}`
-        : "http://localhost:5000/api/service-requests"
+        ? `/api/service-requests/${editingRequest._id}`
+        : "/api/service-requests"
       
       const method = editingRequest ? "PUT" : "POST"
-      
-      // Debug logging
-      console.log("Form Data being submitted:", formData)
-      console.log("Priority being sent:", formData.priority)
-      console.log("Method:", method)
-      console.log("URL:", url)
-
-      const response = await fetch(url, {
+     
+      const response = await apiRequest(url, {
         method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(formData),
       })
 
@@ -170,12 +155,8 @@ export default function ServiceRequests() {
     }
 
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/service-requests/${requestId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await apiRequest(`/api/service-requests/${requestId}`, {
+        method: "DELETE"
       })
 
       if (response.ok) {

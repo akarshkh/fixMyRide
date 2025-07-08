@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { TrendingUp, Users, Wrench, Calendar, Download } from "lucide-react"
 import { useAuth } from "./auth-context"
+import { API_BASE_URL, getAuthHeaders } from "../lib/api"
 
 export default function Reports() {
   const { user } = useAuth()
@@ -43,12 +44,8 @@ export default function Reports() {
 
   const fetchDashboardStats = async () => {
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/dashboard/stats", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`, {
+        headers: getAuthHeaders(),
       })
 
       if (response.ok) {
@@ -66,12 +63,8 @@ export default function Reports() {
 
   const fetchMonthlyRevenue = async () => {
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/reports/monthly-revenue", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(`${API_BASE_URL}/api/reports/monthly-revenue`, {
+        headers: getAuthHeaders(),
       })
 
       if (response.ok) {
@@ -89,13 +82,9 @@ export default function Reports() {
 
   const handleExport = async () => {
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/reports/export", {
+      const response = await fetch(`${API_BASE_URL}/api/reports/export`, {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           period: selectedPeriod,
           dashboardStats,

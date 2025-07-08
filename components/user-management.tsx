@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Search, Edit, Trash2, X, Eye, EyeOff, UserPlus, Shield } from "lucide-react"
+import { Plus, Search, Edit, Trash2, X, Shield, User, Crown } from "lucide-react"
 import { useAuth } from "./auth-context"
+import { apiRequest } from "../lib/api"
 
 interface User {
   _id?: string
@@ -67,13 +68,7 @@ export default function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/admin/users", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await apiRequest("/api/admin/users")
 
       if (response.ok) {
         const data = await response.json()

@@ -57,13 +57,7 @@ export default function Customers() {
 
   const fetchCustomers = async () => {
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch("http://localhost:5000/api/customers", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await apiRequest("/api/customers")
 
       if (response.ok) {
         const data = await response.json()
@@ -89,19 +83,14 @@ if (Array.isArray(data)) {
     setIsLoading(true)
 
     try {
-      const token = localStorage.getItem("crm_token")
       const url = editingCustomer 
-        ? `http://localhost:5000/api/customers/${editingCustomer._id}`
-        : "http://localhost:5000/api/customers"
+        ? `/api/customers/${editingCustomer._id}`
+        : "/api/customers"
       
       const method = editingCustomer ? "PUT" : "POST"
 
-      const response = await fetch(url, {
+      const response = await apiRequest(url, {
         method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           ...formData,
           lastServiceDate: formData.lastServiceDate || new Date().toISOString().split("T")[0],
@@ -146,13 +135,7 @@ if (Array.isArray(data)) {
     setSelectedCustomer(customer)
     setShowAnalyticsModal(true)
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/customer-analytics/lifetime-value`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await apiRequest(`/api/customer-analytics/lifetime-value`)
 
       if (response.ok) {
         const data = await response.json()
@@ -169,13 +152,7 @@ if (Array.isArray(data)) {
   const handleViewHistory = async (customer: Customer) => {
     setSelectedCustomer(customer)
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/customer-analytics/${customer._id}/history`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      })
+      const response = await apiRequest(`/api/customer-analytics/${customer._id}/history`)
 
       if (response.ok) {
         const data = await response.json()
@@ -210,12 +187,8 @@ if (Array.isArray(data)) {
     }
 
     try {
-      const token = localStorage.getItem("crm_token")
-      const response = await fetch(`http://localhost:5000/api/customers/${customerId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      const response = await apiRequest(`/api/customers/${customerId}`, {
+        method: "DELETE"
       })
 
       if (response.ok) {
