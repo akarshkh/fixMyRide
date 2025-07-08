@@ -48,19 +48,6 @@ interface EmailNotifications {
   newCustomer: boolean;
   serviceCompleted: boolean;
   appointmentReminders: boolean;
-  invoiceGenerated: boolean;
-  paymentReceived: boolean;
-  lowInventory: boolean;
-  systemAlerts: boolean;
-}
-
-interface PasswordPolicy {
-  minLength: number;
-  requireUppercase: boolean;
-  requireLowercase: boolean;
-  requireNumbers: boolean;
-  requireSymbols: boolean;
-  maxAge: number;
 }
 
 interface SettingsData {
@@ -69,7 +56,6 @@ interface SettingsData {
   businessPhone: string;
   businessEmail: string;
   businessAddress: BusinessAddress;
-  businessWebsite: string;
   workingHours: WorkingHours;
   currency: string;
   taxRate: number;
@@ -78,22 +64,6 @@ interface SettingsData {
     defaultServiceDuration: number;
     allowOnlineBooking: boolean;
     requireApproval: boolean;
-    maxAdvanceBooking: number;
-  };
-  theme: string;
-  dateFormat: string;
-  timeFormat: string;
-  sessionTimeout: number;
-  passwordPolicy: PasswordPolicy;
-  backupSettings: {
-    enabled: boolean;
-    frequency: string;
-    retention: number;
-  };
-  invoiceSettings: {
-    prefix: string;
-    startingNumber: number;
-    footerText: string;
   };
   createdAt?: string;
   updatedAt?: string;
@@ -110,7 +80,6 @@ const defaultSettings: SettingsData = {
     zipCode: '',
     country: 'India'
   },
-  businessWebsite: '',
   workingHours: {
     monday: { open: '09:00', close: '18:00', isOpen: true },
     tuesday: { open: '09:00', close: '18:00', isOpen: true },
@@ -125,39 +94,12 @@ const defaultSettings: SettingsData = {
   emailNotifications: {
     newCustomer: true,
     serviceCompleted: true,
-    appointmentReminders: true,
-    invoiceGenerated: true,
-    paymentReceived: true,
-    lowInventory: true,
-    systemAlerts: true
+    appointmentReminders: true
   },
   serviceSettings: {
     defaultServiceDuration: 60,
     allowOnlineBooking: true,
-    requireApproval: false,
-    maxAdvanceBooking: 30
-  },
-  theme: 'light',
-  dateFormat: 'DD/MM/YYYY',
-  timeFormat: '12h',
-  sessionTimeout: 30,
-  passwordPolicy: {
-    minLength: 8,
-    requireUppercase: true,
-    requireLowercase: true,
-    requireNumbers: true,
-    requireSymbols: false,
-    maxAge: 90
-  },
-  backupSettings: {
-    enabled: true,
-    frequency: 'daily',
-    retention: 30
-  },
-  invoiceSettings: {
-    prefix: 'INV',
-    startingNumber: 1000,
-    footerText: 'Thank you for your business!'
+    requireApproval: false
   }
 };
 
@@ -319,7 +261,7 @@ export default function SettingsPage() {
 
       {/* Settings Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="business" className="flex items-center gap-2">
             <Building className="w-4 h-4" />
             Business
@@ -331,18 +273,6 @@ export default function SettingsPage() {
           <TabsTrigger value="services" className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
             Services
-          </TabsTrigger>
-          <TabsTrigger value="system" className="flex items-center gap-2">
-            <Palette className="w-4 h-4" />
-            System
-          </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-2">
-            <Shield className="w-4 h-4" />
-            Security
-          </TabsTrigger>
-          <TabsTrigger value="advanced" className="flex items-center gap-2">
-            <HardDrive className="w-4 h-4" />
-            Advanced
           </TabsTrigger>
         </TabsList>
 
@@ -364,15 +294,6 @@ export default function SettingsPage() {
                     value={settings.businessName}
                     onChange={(e) => updateSettings('businessName', e.target.value)}
                     placeholder="Enter business name"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="businessWebsite">Website</Label>
-                  <Input
-                    id="businessWebsite"
-                    value={settings.businessWebsite}
-                    onChange={(e) => updateSettings('businessWebsite', e.target.value)}
-                    placeholder="https://example.com"
                   />
                 </div>
               </div>
@@ -579,30 +500,18 @@ export default function SettingsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="defaultServiceDuration">Default Service Duration (minutes)</Label>
-                  <Input
-                    id="defaultServiceDuration"
-                    type="number"
-                    value={settings.serviceSettings.defaultServiceDuration}
-                    onChange={(e) => updateSettings('serviceSettings.defaultServiceDuration', parseInt(e.target.value) || 60)}
-                    min="15"
-                    max="480"
-                    step="15"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="maxAdvanceBooking">Max Advance Booking (days)</Label>
-                  <Input
-                    id="maxAdvanceBooking"
-                    type="number"
-                    value={settings.serviceSettings.maxAdvanceBooking}
-                    onChange={(e) => updateSettings('serviceSettings.maxAdvanceBooking', parseInt(e.target.value) || 30)}
-                    min="1"
-                    max="365"
-                  />
-                </div>
+              <div>
+                <Label htmlFor="defaultServiceDuration">Default Service Duration (minutes)</Label>
+                <Input
+                  id="defaultServiceDuration"
+                  type="number"
+                  value={settings.serviceSettings.defaultServiceDuration}
+                  onChange={(e) => updateSettings('serviceSettings.defaultServiceDuration', parseInt(e.target.value) || 60)}
+                  min="15"
+                  max="480"
+                  step="15"
+                  className="w-64"
+                />
               </div>
               
               <div className="space-y-3">
@@ -632,228 +541,6 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* System Settings */}
-        <TabsContent value="system" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Palette className="w-5 h-5" />
-                System Preferences
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="theme">Theme</Label>
-                  <Select value={settings.theme} onValueChange={(value) => updateSettings('theme', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="sessionTimeout">Session Timeout (minutes)</Label>
-                  <Input
-                    id="sessionTimeout"
-                    type="number"
-                    value={settings.sessionTimeout}
-                    onChange={(e) => updateSettings('sessionTimeout', parseInt(e.target.value) || 30)}
-                    min="5"
-                    max="480"
-                  />
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="dateFormat">Date Format</Label>
-                  <Select value={settings.dateFormat} onValueChange={(value) => updateSettings('dateFormat', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
-                      <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
-                      <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="timeFormat">Time Format</Label>
-                  <Select value={settings.timeFormat} onValueChange={(value) => updateSettings('timeFormat', value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="12h">12 Hour</SelectItem>
-                      <SelectItem value="24h">24 Hour</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Security Settings */}
-        <TabsContent value="security" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="w-5 h-5" />
-                Password Policy
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="minLength">Minimum Length</Label>
-                  <Input
-                    id="minLength"
-                    type="number"
-                    value={settings.passwordPolicy.minLength}
-                    onChange={(e) => updateSettings('passwordPolicy.minLength', parseInt(e.target.value) || 8)}
-                    min="6"
-                    max="32"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="maxAge">Password Expires After (days)</Label>
-                  <Input
-                    id="maxAge"
-                    type="number"
-                    value={settings.passwordPolicy.maxAge}
-                    onChange={(e) => updateSettings('passwordPolicy.maxAge', parseInt(e.target.value) || 90)}
-                    min="30"
-                    max="365"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                {[
-                  { key: 'requireUppercase', label: 'Require Uppercase Letters' },
-                  { key: 'requireLowercase', label: 'Require Lowercase Letters' },
-                  { key: 'requireNumbers', label: 'Require Numbers' },
-                  { key: 'requireSymbols', label: 'Require Symbols' }
-                ].map(({ key, label }) => (
-                  <div key={key} className="flex items-center justify-between">
-                    <Label>{label}</Label>
-                    <Switch
-                      checked={settings.passwordPolicy[key as keyof typeof settings.passwordPolicy] as boolean}
-                      onCheckedChange={(checked) => updateSettings(`passwordPolicy.${key}`, checked)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Advanced Settings */}
-        <TabsContent value="advanced" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <HardDrive className="w-5 h-5" />
-                Backup Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label>Enable Automatic Backups</Label>
-                  <p className="text-sm text-gray-600">Automatically backup system data</p>
-                </div>
-                <Switch
-                  checked={settings.backupSettings.enabled}
-                  onCheckedChange={(checked) => updateSettings('backupSettings.enabled', checked)}
-                />
-              </div>
-              
-              {settings.backupSettings.enabled && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="backupFrequency">Backup Frequency</Label>
-                    <Select 
-                      value={settings.backupSettings.frequency} 
-                      onValueChange={(value) => updateSettings('backupSettings.frequency', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="hourly">Hourly</SelectItem>
-                        <SelectItem value="daily">Daily</SelectItem>
-                        <SelectItem value="weekly">Weekly</SelectItem>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="backupRetention">Retention Period (days)</Label>
-                    <Input
-                      id="backupRetention"
-                      type="number"
-                      value={settings.backupSettings.retention}
-                      onChange={(e) => updateSettings('backupSettings.retention', parseInt(e.target.value) || 30)}
-                      min="1"
-                      max="365"
-                    />
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <FileText className="w-5 h-5" />
-                Invoice Settings
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="invoicePrefix">Invoice Prefix</Label>
-                  <Input
-                    id="invoicePrefix"
-                    value={settings.invoiceSettings.prefix}
-                    onChange={(e) => updateSettings('invoiceSettings.prefix', e.target.value)}
-                    placeholder="INV"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="startingNumber">Starting Number</Label>
-                  <Input
-                    id="startingNumber"
-                    type="number"
-                    value={settings.invoiceSettings.startingNumber}
-                    onChange={(e) => updateSettings('invoiceSettings.startingNumber', parseInt(e.target.value) || 1000)}
-                    min="1"
-                  />
-                </div>
-              </div>
-              
-              <div>
-                <Label htmlFor="footerText">Invoice Footer Text</Label>
-                <Textarea
-                  id="footerText"
-                  value={settings.invoiceSettings.footerText}
-                  onChange={(e) => updateSettings('invoiceSettings.footerText', e.target.value)}
-                  placeholder="Thank you for your business!"
-                  rows={3}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
       </Tabs>
 
       {/* Save Changes Alert */}
@@ -873,11 +560,7 @@ function getNotificationDescription(key: string): string {
   const descriptions: { [key: string]: string } = {
     newCustomer: 'Notify when a new customer is registered',
     serviceCompleted: 'Notify when a service is marked as completed',
-    appointmentReminders: 'Send appointment reminders to customers',
-    invoiceGenerated: 'Notify when a new invoice is generated',
-    paymentReceived: 'Notify when a payment is received',
-    lowInventory: 'Notify when inventory items are running low',
-    systemAlerts: 'Notify about system alerts and errors'
+    appointmentReminders: 'Send appointment reminders to customers'
   };
   return descriptions[key] || 'Notification setting';
 }
