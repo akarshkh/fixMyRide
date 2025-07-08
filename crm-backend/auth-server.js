@@ -14,7 +14,7 @@ const app = express()
 const server = http.createServer(app)
 const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://fix-my-ride-bfo2azv8q-khandelwalakarshak-5961s-projects.vercel.app", /\.vercel\.app$/],
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000", /\.vercel\.app$/],
     methods: ["GET", "POST"]
   }
 })
@@ -24,7 +24,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-producti
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://fix-my-ride-bfo2azv8q-khandelwalakarshak-5961s-projects.vercel.app", /\.vercel\.app$/],
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000", /\.vercel\.app$/],
     credentials: true,
   }),
 )

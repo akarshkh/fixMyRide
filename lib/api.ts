@@ -1,5 +1,5 @@
 // API Configuration
-// Force production URL if we're in production
+// Use Render backend for production and localhost for development
 const getApiBaseUrl = () => {
   // Debug logging
   if (typeof window !== 'undefined') {
@@ -10,12 +10,12 @@ const getApiBaseUrl = () => {
     });
   }
   
-  // If we're on Vercel (production), use the current domain with /api prefix
+  // If we're in production (on Vercel), use Render backend
   if (typeof window !== 'undefined' && window.location.hostname.includes('vercel.app')) {
-    return window.location.origin;
+    return 'https://fixmyride-backend.onrender.com';
   }
   
-  // Otherwise use environment variable or localhost fallback
+  // For development, use environment variable or localhost fallback
   return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 };
 
