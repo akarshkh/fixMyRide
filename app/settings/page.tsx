@@ -40,14 +40,6 @@ interface BusinessAddress {
   country: string;
 }
 
-export default function SettingsPage() {
-  return (
-    <AuthProvider>
-      <SettingsPageContent />
-    </AuthProvider>
-  );
-}
-
 interface WorkingHours {
   [key: string]: {
     open: string;
@@ -55,7 +47,6 @@ interface WorkingHours {
     isOpen: boolean;
   };
 }
-
 
 interface SettingsData {
   _id?: string;
@@ -241,35 +232,35 @@ function SettingsPageContent() {
                 <p className="text-gray-600 mt-1">Manage your CRM system configuration</p>
               </div>
         
-        <div className="flex items-center gap-2">
-          {hasChanges && (
-            <Badge variant="outline" className="text-orange-600 border-orange-600">
-              <AlertCircle className="w-4 h-4 mr-1" />
-              Unsaved Changes
-            </Badge>
-          )}
-          <Button 
-            variant="outline" 
-            onClick={resetSettings}
-            disabled={!hasChanges || isSaving}
-          >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Reset
-          </Button>
-          <Button 
-            onClick={saveSettings}
-            disabled={!hasChanges || isSaving}
-            className="bg-blue-600 hover:bg-blue-700"
-          >
-            {isSaving ? (
-              <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4 mr-2" />
-            )}
-            {isSaving ? 'Saving...' : 'Save Settings'}
-          </Button>
-        </div>
-      </div>
+              <div className="flex items-center gap-2">
+                {hasChanges && (
+                  <Badge variant="outline" className="text-orange-600 border-orange-600">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    Unsaved Changes
+                  </Badge>
+                )}
+                <Button 
+                  variant="outline" 
+                  onClick={resetSettings}
+                  disabled={!hasChanges || isSaving}
+                >
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Reset
+                </Button>
+                <Button 
+                  onClick={saveSettings}
+                  disabled={!hasChanges || isSaving}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  {isSaving ? (
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="w-4 h-4 mr-2" />
+                  )}
+                  {isSaving ? 'Saving...' : 'Save Settings'}
+                </Button>
+              </div>
+            </div>
 
       {/* Settings Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -528,7 +519,18 @@ function SettingsPageContent() {
           </AlertDescription>
         </Alert>
       )}
+          </div>
+        </main>
+      </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <AuthProvider>
+      <SettingsPageContent />
+    </AuthProvider>
   );
 }
 
