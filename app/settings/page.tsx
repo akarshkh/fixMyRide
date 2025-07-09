@@ -133,8 +133,14 @@ function SettingsPageContent() {
       
       if (response.ok) {
         const data = await response.json();
-        setSettings(data.data);
-        setOriginalSettings(data.data);
+        // Ensure workingHours is properly initialized
+        const settingsData = {
+          ...defaultSettings,
+          ...data.data,
+          workingHours: data.data.workingHours || defaultSettings.workingHours
+        };
+        setSettings(settingsData);
+        setOriginalSettings(settingsData);
       } else {
         throw new Error('Failed to fetch settings');
       }
@@ -427,35 +433,35 @@ function SettingsPageContent() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {Object.entries(settings.workingHours).map(([day, hours]) => (
+                {settings.workingHours && Object.entries(settings.workingHours).map(([day, hours]) => (
                   <div key={day} className="flex items-center gap-4">
                     <div className="w-24">
                       <Label className="capitalize">{day}</Label>
                     </div>
                     <Switch
-                      checked={hours.isOpen}
+                      checked={hours?.isOpen || false}
                       onCheckedChange={(checked) => updateSettings(`workingHours.${day}.isOpen`, checked)}
                     />
-                    {hours.isOpen && (
+                    {hours?.isOpen && (
                       <>
                         <div className="flex items-center gap-2">
                           <Input
                             type="time"
-                            value={hours.open}
+                            value={hours.open || '09:00'}
                             onChange={(e) => updateSettings(`workingHours.${day}.open`, e.target.value)}
                             className="w-32"
                           />
                           <span>to</span>
                           <Input
                             type="time"
-                            value={hours.close}
+                            value={hours.close || '18:00'}
                             onChange={(e) => updateSettings(`workingHours.${day}.close`, e.target.value)}
                             className="w-32"
                           />
                         </div>
                       </>
                     )}
-                    {!hours.isOpen && (
+                    {!hours?.isOpen && (
                       <Badge variant="secondary">Closed</Badge>
                     )}
                   </div>
