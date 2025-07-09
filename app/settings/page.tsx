@@ -105,14 +105,11 @@ function SettingsPageContent() {
   const { toast } = useToast();
   const { user, login, isLoading: authLoading, error } = useAuth();
 
-  // Show login page if user is not authenticated
-  if (!user) {
-    return <Login onLogin={login} isLoading={authLoading} error={error} />
-  }
-
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    if (user) {
+      fetchSettings();
+    }
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     // Check if there are any changes
@@ -122,9 +119,15 @@ function SettingsPageContent() {
 
   const fetchSettings = async () => {
     try {
+      const token = localStorage.getItem('crm_token');
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+      
       const response = await fetch('/api/settings', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('crm_token')}`
+          'Authorization': `Bearer ${token}`
         }
       });
       
@@ -205,6 +208,11 @@ function SettingsPageContent() {
       return newSettings;
     });
   };
+
+  // Show login page if user is not authenticated
+  if (!user) {
+    return <Login onLogin={login} isLoading={authLoading} error={error} />
+  }
 
   if (isLoading) {
     return (
