@@ -11,7 +11,7 @@ const setCorsHeaders = (res) => {
   );
 };
 
-// JWT verification middleware
+// JWT verification
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
@@ -33,11 +33,7 @@ const verifyToken = (req) => {
 
 // Settings Schema
 const settingsSchema = new mongoose.Schema({
-  // Business Information
-  businessName: {
-    type: String,
-    default: 'Fix My Ride'
-  },
+  businessName: { type: String, default: 'Fix My Ride' },
   businessAddress: {
     street: String,
     city: String,
@@ -48,44 +44,15 @@ const settingsSchema = new mongoose.Schema({
   businessPhone: String,
   businessEmail: String,
   businessWebsite: String,
-  
-  // Tax Settings
-  taxRate: {
-    type: Number,
-    default: 18, // GST rate in India
-    min: 0,
-    max: 100
-  },
-  taxNumber: String, // GST number
-  
-  // Currency Settings
-  currency: {
-    type: String,
-    default: 'INR',
-    enum: ['INR', 'USD', 'EUR', 'GBP', 'AUD', 'CAD']
-  },
-  currencySymbol: {
-    type: String,
-    default: '₹'
-  },
-  
-  // Service Settings  
+  taxRate: { type: Number, default: 18, min: 0, max: 100 },
+  taxNumber: String,
+  currency: { type: String, default: 'INR', enum: ['INR', 'USD', 'EUR', 'GBP', 'AUD', 'CAD'] },
+  currencySymbol: { type: String, default: '₹' },
   serviceSettings: {
-    defaultServiceDuration: {
-      type: Number,
-      default: 60 // minutes
-    },
-    allowOnlineBooking: {
-      type: Boolean,
-      default: true
-    },
-    requireApproval: {
-      type: Boolean,
-      default: false
-    }
+    defaultServiceDuration: { type: Number, default: 60 },
+    allowOnlineBooking: { type: Boolean, default: true },
+    requireApproval: { type: Boolean, default: false }
   },
-  
-  // Appointment Settings
   workingHours: {
     monday: { open: String, close: String, isOpen: Boolean },
     tuesday: { open: String, close: String, isOpen: Boolean },
@@ -95,16 +62,8 @@ const settingsSchema = new mongoose.Schema({
     saturday: { open: String, close: String, isOpen: Boolean },
     sunday: { open: String, close: String, isOpen: Boolean }
   },
-  
-  // Created/Updated tracking
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
-  }
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now }
 });
 
 // Default working hours
@@ -147,8 +106,10 @@ const connectDB = async () => {
   }
 };
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   setCorsHeaders(res);
+  
+  console.log(`🔍 Settings API called: ${req.method} ${req.url}`);
   
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -167,10 +128,9 @@ module.exports = async (req, res) => {
       });
     }
     
-    console.log('✅ Settings API - User authenticated:', user.username, 'Role:', user.role);
+    console.log(`✅ Settings API - User authenticated: ${user.username}, Role: ${user.role}`);
     
     if (req.method === 'GET') {
-      // Get settings
       let settings = await Settings.findOne();
       
       if (!settings) {
@@ -185,7 +145,6 @@ module.exports = async (req, res) => {
     }
     
     if (req.method === 'PUT') {
-      // Update settings (admin only)
       if (user.role !== 'admin') {
         return res.status(403).json({
           success: false,
@@ -194,7 +153,7 @@ module.exports = async (req, res) => {
       }
       
       const updates = req.body;
-      console.log('📝 Settings update request:', JSON.stringify(updates, null, 2));
+      console.log('📝 Settings update request received');
       
       // Remove fields that shouldn't be updated directly
       delete updates._id;
@@ -221,7 +180,7 @@ module.exports = async (req, res) => {
     
     return res.status(405).json({
       success: false,
-      message: 'Method not allowed'
+      message: `Method ${req.method} not allowed`
     });
     
   } catch (error) {
@@ -229,7 +188,7 @@ module.exports = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Internal server error',
-      error: error.message
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Server error'
     });
   }
-};
+}
