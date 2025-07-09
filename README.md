@@ -2,6 +2,11 @@
 
 A Web-based CRM system for managing customers and service requests in two-wheeler automobile service centers.
 
+## 🌐 Live Demo
+
+🚀 **[View Live Project](https://fixmyride-akarsh.vercel.app/)**
+
+*Try the live demo using the default login credentials below*
 
 ## 🧩 Project Highlights
 
