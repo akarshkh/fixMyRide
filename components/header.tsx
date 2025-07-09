@@ -1,6 +1,6 @@
 "use client"
 
-import { LogOut, User, Settings } from "lucide-react"
+import { LogOut, User } from "lucide-react"
 import { useAuth } from "./auth-context"
 
 export default function Header() {
@@ -31,12 +31,6 @@ export default function Header() {
               <p className="text-xs text-gray-500 capitalize">{user?.role}</p>
             </div>
           </div>
-
-          
-          {/* Settings Button */}
-          <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
-            <Settings className="h-5 w-5" />
-          </button>
 
           {/* Logout Button */}
           <button

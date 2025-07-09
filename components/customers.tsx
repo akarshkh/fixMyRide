@@ -274,21 +274,20 @@ if (Array.isArray(data)) {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Vehicle Model</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Visits</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Last Service</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Total Spend</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Vehicle Model</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Visits</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Last Service</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredCustomers.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-8 py-8 text-center text-base text-gray-500">
+                  <td colSpan={8} className="px-4 py-8 text-center text-base text-gray-500">
                     {searchTerm ? 
                       "No customers found matching your search." : 
                       "No customers found. Add your first customer to get started."
@@ -298,63 +297,73 @@ if (Array.isArray(data)) {
               ) : (
                 filteredCustomers.map((customer: Customer) => (
                   <tr key={customer._id} className="hover:bg-gray-50">
-                    <td className="px-8 py-5 whitespace-nowrap text-base font-medium text-gray-900">{customer.name}</td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">{customer.phone}</td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">{customer.email}</td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">{customer.vehicleModel}</td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base font-medium text-blue-600">
+                    <td className="px-4 py-4 text-sm font-medium text-gray-900">
+                      <div className="flex flex-col">
+                        <span className="font-medium">{customer.name}</span>
+                        <span className="text-xs text-gray-500 mt-1">{formatCurrency(customer.totalSpend)}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-500">{customer.phone}</td>
+                    <td className="px-4 py-4 text-sm text-gray-500">
+                      <div className="max-w-[150px] truncate" title={customer.email}>
+                        {customer.email}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-500">
+                      <div className="max-w-[120px] truncate" title={customer.vehicleModel}>
+                        {customer.vehicleModel}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm font-medium text-blue-600">
                       {customer.visitCount || 1}
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap">
+                    <td className="px-4 py-4">
                       {customer.category ? (
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
                           customer.category.color === 'success' ? 'bg-green-100 text-green-800' :
                           customer.category.color === 'warning' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-blue-100 text-blue-800'
                         }`}>
-                          <span className="mr-2">{customer.category.icon}</span>
+                          <span className="mr-1">{customer.category.icon}</span>
                           {customer.category.name}
                         </span>
                       ) : (
-                        <span className="text-gray-400 text-sm">N/A</span>
+                        <span className="text-gray-400 text-xs">N/A</span>
                       )}
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
+                    <td className="px-4 py-4 text-sm text-gray-500">
                       {new Date(customer.lastServiceDate).toLocaleDateString("en-IN")}
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base font-medium text-green-600">
-                      {formatCurrency(customer.totalSpend)}
-                    </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
-                      <div className="flex space-x-3">
+                    <td className="px-4 py-4 text-sm text-gray-500">
+                      <div className="flex space-x-2">
                         <button 
                           onClick={() => handleViewAnalytics(customer)}
-                          className="p-2 text-green-600 hover:text-green-900 hover:bg-green-100 rounded-md transition-colors"
+                          className="p-1.5 text-green-600 hover:text-green-900 hover:bg-green-100 rounded-md transition-colors"
                           title="View Analytics"
                         >
-                          <TrendingUp className="h-5 w-5" />
+                          <TrendingUp className="h-4 w-4" />
                         </button>
                         <button 
                           onClick={() => handleViewHistory(customer)}
-                          className="p-2 text-purple-600 hover:text-purple-900 hover:bg-purple-100 rounded-md transition-colors"
+                          className="p-1.5 text-purple-600 hover:text-purple-900 hover:bg-purple-100 rounded-md transition-colors"
                           title="Service History"
                         >
-                          <History className="h-5 w-5" />
+                          <History className="h-4 w-4" />
                         </button>
                         <button 
                           onClick={() => handleEdit(customer)}
-                          className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-100 rounded-md transition-colors"
+                          className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-100 rounded-md transition-colors"
                           title="Edit Customer"
                         >
-                          <Edit className="h-5 w-5" />
+                          <Edit className="h-4 w-4" />
                         </button>
                         {["admin", "manager"].includes(user?.role || "") && (
                           <button 
                             onClick={() => handleDelete(customer._id!)}
-                            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-md transition-colors"
+                            className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-md transition-colors"
                             title="Delete Customer"
                           >
-                            <Trash2 className="h-5 w-5" />
+                            <Trash2 className="h-4 w-4" />
                           </button>
                         )}
                       </div>
