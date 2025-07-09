@@ -2,6 +2,7 @@
 
 import { LogOut, User, Settings } from "lucide-react"
 import { useAuth } from "./auth-context"
+import BusinessInfo from "./business-info"
 
 export default function Header() {
   const { user, logout } = useAuth()
@@ -15,9 +16,14 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-64 right-0 z-30 bg-white shadow-sm px-6 py-4">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-semibold text-gray-900">Welcome back, {user?.name}</h2>
-          <p className="text-sm text-gray-600 capitalize">{user?.role} Dashboard</p>
+        <div className="flex items-center space-x-6">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">Welcome back, {user?.name}</h2>
+            <p className="text-sm text-gray-600 capitalize">{user?.role} Dashboard</p>
+          </div>
+          <div className="hidden lg:block">
+            <BusinessInfo compact={true} className="" />
+          </div>
         </div>
 
         <div className="flex items-center space-x-4">
