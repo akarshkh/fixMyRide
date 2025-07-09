@@ -335,35 +335,39 @@ if (Array.isArray(data)) {
                       {new Date(customer.lastServiceDate).toLocaleDateString("en-IN")}
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-500">
-                      <div className="flex space-x-2">
+                      <div className="flex space-x-3">
                         <button 
                           onClick={() => handleViewAnalytics(customer)}
-                          className="p-1.5 text-green-600 hover:text-green-900 hover:bg-green-100 rounded-md transition-colors"
+                          className="flex flex-col items-center p-1.5 text-green-600 hover:text-green-900 hover:bg-green-100 rounded-md transition-colors"
                           title="View Analytics"
                         >
-                          <TrendingUp className="h-4 w-4" />
+                          <TrendingUp className="h-4 w-4 mb-1" />
+                          <span className="text-xs font-medium">Analytics</span>
                         </button>
                         <button 
                           onClick={() => handleViewHistory(customer)}
-                          className="p-1.5 text-purple-600 hover:text-purple-900 hover:bg-purple-100 rounded-md transition-colors"
+                          className="flex flex-col items-center p-1.5 text-purple-600 hover:text-purple-900 hover:bg-purple-100 rounded-md transition-colors"
                           title="Service History"
                         >
-                          <History className="h-4 w-4" />
+                          <History className="h-4 w-4 mb-1" />
+                          <span className="text-xs font-medium">History</span>
                         </button>
                         <button 
                           onClick={() => handleEdit(customer)}
-                          className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-100 rounded-md transition-colors"
+                          className="flex flex-col items-center p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-100 rounded-md transition-colors"
                           title="Edit Customer"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-4 w-4 mb-1" />
+                          <span className="text-xs font-medium">Edit</span>
                         </button>
                         {["admin", "manager"].includes(user?.role || "") && (
                           <button 
                             onClick={() => handleDelete(customer._id!)}
-                            className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-md transition-colors"
+                            className="flex flex-col items-center p-1.5 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-md transition-colors"
                             title="Delete Customer"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4 mb-1" />
+                            <span className="text-xs font-medium">Delete</span>
                           </button>
                         )}
                       </div>
