@@ -1,6 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from "@/components/auth-context"
+import Login from "@/components/login"
+import Sidebar from "@/components/sidebar"
+import Header from "@/components/header"
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,6 +38,53 @@ interface BusinessAddress {
   state: string;
   zipCode: string;
   country: string;
+}
+
+export default function SettingsPage() {
+  return (
+    <AuthProvider>
+      <SettingsPageWrapper />
+    </AuthProvider>
+  );
+}
+
+function SettingsPageWrapper() {
+  const { user, login, isLoading, error } = useAuth();
+
+  // Show login page if user is not authenticated
+  if (!user) {
+    return <Login onLogin={login} isLoading={isLoading} error={error} />;
+  }
+
+  // Check if user has admin role to access settings
+  if (user.role !== 'admin') {
+    return (
+      <div className="flex min-h-screen bg-gray-100">
+        <Sidebar activeSection="settings" setActiveSection={() => {}} />
+        <div className="flex-1 flex flex-col ml-64">
+          <Header />
+          <main className="flex-1 p-8 mt-20">
+            <div className="text-center py-20">
+              <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+              <p className="text-gray-600">You need admin privileges to access system settings.</p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen bg-gray-100">
+      <Sidebar activeSection="settings" setActiveSection={() => {}} />
+      <div className="flex-1 flex flex-col ml-64">
+        <Header />
+        <main className="flex-1 p-8 mt-20">
+          <SettingsPageContent />
+        </main>
+      </div>
+    </div>
+  );
 }
 
 interface WorkingHours {
@@ -92,7 +143,7 @@ const defaultSettings: SettingsData = {
   }
 };
 
-export default function SettingsPage() {
+function SettingsPageContent() {
   const [settings, setSettings] = useState<SettingsData>(defaultSettings);
   const [originalSettings, setOriginalSettings] = useState<SettingsData>(defaultSettings);
   const [isLoading, setIsLoading] = useState(true);
@@ -100,6 +151,7 @@ export default function SettingsPage() {
   const [hasChanges, setHasChanges] = useState(false);
   const [activeTab, setActiveTab] = useState('business');
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchSettings();
@@ -443,38 +495,6 @@ export default function SettingsPage() {
           </Card>
         </TabsContent>
 
-        {/* Notification Settings */}
-        <TabsContent value="notifications" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Bell className="w-5 h-5" />
-                Email Notifications
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {Object.entries(settings.emailNotifications).map(([key, enabled]) => (
-                  <div key={key} className="flex items-center justify-between">
-                    <div>
-                      <Label className="capitalize cursor-pointer">
-                        {key.replace(/([A-Z])/g, ' $1').trim()}
-                      </Label>
-                      <p className="text-sm text-gray-600">
-                        {getNotificationDescription(key)}
-                      </p>
-                    </div>
-                    <Switch
-                      checked={enabled}
-                      onCheckedChange={(checked) => updateSettings(`emailNotifications.${key}`, checked)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
         {/* Service Settings */}
         <TabsContent value="services" className="space-y-6">
           <Card>
@@ -541,11 +561,3 @@ export default function SettingsPage() {
   );
 }
 
-function getNotificationDescription(key: string): string {
-  const descriptions: { [key: string]: string } = {
-    newCustomer: 'Notify when a new customer is registered',
-    serviceCompleted: 'Notify when a service is marked as completed',
-    appointmentReminders: 'Send appointment reminders to customers'
-  };
-  return descriptions[key] || 'Notification setting';
-}
