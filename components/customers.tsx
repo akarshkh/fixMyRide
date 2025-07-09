@@ -28,6 +28,7 @@ export default function Customers() {
   const [showForm, setShowForm] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingCustomers, setIsLoadingCustomers] = useState(true)
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [showAnalyticsModal, setShowAnalyticsModal] = useState(false)
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
@@ -56,25 +57,29 @@ export default function Customers() {
   }, [])
 
   const fetchCustomers = async () => {
+    setIsLoadingCustomers(true)
     try {
       const response = await apiRequest("/api/customers")
 
       if (response.ok) {
         const data = await response.json()
-if (Array.isArray(data)) {
-  setCustomers(data)
-} else if (Array.isArray(data.customers)) {
-  setCustomers(data.customers)
-} else {
-  console.error("Expected customers array, got:", data)
-  setCustomers([])
-}
-
+        if (Array.isArray(data)) {
+          setCustomers(data)
+        } else if (Array.isArray(data.customers)) {
+          setCustomers(data.customers)
+        } else {
+          console.error("Expected customers array, got:", data)
+          setCustomers([])
+        }
       } else {
         console.error("Failed to fetch customers")
+        setCustomers([])
       }
     } catch (error) {
       console.error("Error fetching customers:", error)
+      setCustomers([])
+    } finally {
+      setIsLoadingCustomers(false)
     }
   }
 
@@ -285,12 +290,21 @@ if (Array.isArray(data)) {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredCustomers.length === 0 ? (
+              {isLoadingCustomers ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+                      <p className="text-gray-500 text-base">Loading customers...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredCustomers.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-8 text-center text-base text-gray-500">
                     {searchTerm ? 
                       "No customers found matching your search." : 
-                      "No customers found. Add your first customer to get started."
+                      "No customers found. Customers are automatically created when service requests are made."
                     }
                   </td>
                 </tr>

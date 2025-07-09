@@ -20,6 +20,7 @@ export default function InventoryManagement() {
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingItems, setIsLoadingItems] = useState(true)
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null)
   const [formData, setFormData] = useState<Partial<InventoryItem>>({
     name: "",
@@ -33,6 +34,7 @@ export default function InventoryManagement() {
   }, [])
 
   const fetchItems = async () => {
+    setIsLoadingItems(true)
     try {
       const token = localStorage.getItem("crm_token")
       const response = await apiRequest("/api/inventory")
@@ -42,9 +44,13 @@ export default function InventoryManagement() {
         setItems(data)
       } else {
         console.error("Failed to fetch inventory items")
+        setItems([])
       }
     } catch (error) {
       console.error("Error fetching inventory items:", error)
+      setItems([])
+    } finally {
+      setIsLoadingItems(false)
     }
   }
 
@@ -198,12 +204,21 @@ export default function InventoryManagement() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredItems.length === 0 ? (
+              {isLoadingItems ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+                      <p className="text-gray-500 text-base">Loading inventory items...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredItems.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
                     {searchTerm || categoryFilter !== "all" 
                       ? "No items found matching your filters." 
-                      : "No items found."
+                      : "No inventory items found. Add your first item to get started."
                     }
                   </td>
                 </tr>

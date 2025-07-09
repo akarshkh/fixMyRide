@@ -138,50 +138,69 @@ export default function Reports() {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {formatCurrency(dashboardStats.totalRevenue)}
-              </p>
-              <p className="text-sm text-green-600">{dashboardStats.percentageChanges?.revenue || '0'}% from last period</p>
+        {isLoading ? (
+          // Loading state for metrics
+          [1, 2, 3].map((i) => (
+            <div key={i} className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="h-4 bg-gray-200 rounded w-24 mb-2 animate-pulse"></div>
+                  <div className="h-8 bg-gray-200 rounded w-16 mb-2 animate-pulse"></div>
+                  <div className="h-3 bg-gray-200 rounded w-32 animate-pulse"></div>
+                </div>
+                <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+              </div>
             </div>
-            <div className="bg-green-500 p-3 rounded-full">
-              <TrendingUp className="h-6 w-6 text-white" />
+          ))
+        ) : (
+          // Actual metrics
+          <>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {formatCurrency(dashboardStats.totalRevenue)}
+                  </p>
+                  <p className="text-sm text-green-600">{dashboardStats.percentageChanges?.revenue || '0'}% from last period</p>
+                </div>
+                <div className="bg-green-500 p-3 rounded-full">
+                  <TrendingUp className="h-6 w-6 text-white" />
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">New Customers</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {dashboardStats.totalCustomers}
-              </p>
-              <p className="text-sm text-blue-600">{dashboardStats.percentageChanges?.customers || '0'}% from last period</p>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">New Customers</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {dashboardStats.totalCustomers}
+                  </p>
+                  <p className="text-sm text-blue-600">{dashboardStats.percentageChanges?.customers || '0'}% from last period</p>
+                </div>
+                <div className="bg-blue-500 p-3 rounded-full">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+              </div>
             </div>
-            <div className="bg-blue-500 p-3 rounded-full">
-              <Users className="h-6 w-6 text-white" />
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Services Completed</p>
-              <p className="text-2xl font-bold text-gray-900">
-                {dashboardStats.completedRequests}
-              </p>
-              <p className="text-sm text-purple-600">{dashboardStats.percentageChanges?.completedRequests || '0'}% from last period</p>
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Services Completed</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {dashboardStats.completedRequests}
+                  </p>
+                  <p className="text-sm text-purple-600">{dashboardStats.percentageChanges?.completedRequests || '0'}% from last period</p>
+                </div>
+                <div className="bg-purple-500 p-3 rounded-full">
+                  <Wrench className="h-6 w-6 text-white" />
+                </div>
+              </div>
             </div>
-            <div className="bg-purple-500 p-3 rounded-full">
-              <Wrench className="h-6 w-6 text-white" />
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
 
       {/* Charts Section */}

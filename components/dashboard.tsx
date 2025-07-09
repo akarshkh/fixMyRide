@@ -18,6 +18,7 @@ export default function Dashboard() {
     }
   })
   const [recentActivities, setRecentActivities] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   // Helper function to format currency in Indian Rupees
   const formatCurrency = (amount: number) => {
@@ -32,6 +33,7 @@ export default function Dashboard() {
   }, [])
 
   const fetchDashboardStats = async () => {
+    setIsLoading(true)
     try {
       const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`, {
         headers: getAuthHeaders(),
@@ -55,6 +57,8 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error("Error fetching dashboard stats:", error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -88,6 +92,46 @@ export default function Dashboard() {
       change: `${stats.percentageChanges?.revenue || '0'}%`,
     },
   ]
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <div className="text-sm text-gray-500">Last updated: {new Date().toLocaleString()}</div>
+        </div>
+
+        {/* Loading Metrics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="h-4 bg-gray-200 rounded w-24 mb-2 animate-pulse"></div>
+                  <div className="h-8 bg-gray-200 rounded w-16 mb-2 animate-pulse"></div>
+                  <div className="h-3 bg-gray-200 rounded w-32 animate-pulse"></div>
+                </div>
+                <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Loading Recent Activities */}
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Activities</h2>
+          </div>
+          <div className="p-6">
+            <div className="flex flex-col items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+              <p className="text-gray-500 text-base">Loading dashboard data...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">

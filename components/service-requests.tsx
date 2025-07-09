@@ -29,6 +29,7 @@ export default function ServiceRequests() {
   const [statusFilter, setStatusFilter] = useState("All")
   const [priorityFilter, setPriorityFilter] = useState("All")
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingRequests, setIsLoadingRequests] = useState(true)
   const [editingRequest, setEditingRequest] = useState<ServiceRequest | null>(null)
   const [formData, setFormData] = useState<ServiceRequest>({
     customerName: "",
@@ -58,6 +59,7 @@ export default function ServiceRequests() {
 
 
   const fetchServiceRequests = async () => {
+    setIsLoadingRequests(true)
     try {
       const response = await apiRequest("/api/service-requests")
       
@@ -74,9 +76,13 @@ export default function ServiceRequests() {
         }
       } else {
         console.error("Failed to fetch service requests")
+        setRequests([])
       }
     } catch (error) {
       console.error("Error fetching service requests:", error)
+      setRequests([])
+    } finally {
+      setIsLoadingRequests(false)
     }
   }
 
@@ -294,8 +300,17 @@ export default function ServiceRequests() {
                 <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[8%] min-w-[70px]">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredRequests.length === 0 ? (
+            			<tbody className="bg-white divide-y divide-gray-200">
+              {isLoadingRequests ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+                      <p className="text-gray-500 text-base">Loading service requests...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredRequests.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-2 py-6 text-center text-sm text-gray-500">
                     {searchTerm || statusFilter !== "All" || priorityFilter !== "All"

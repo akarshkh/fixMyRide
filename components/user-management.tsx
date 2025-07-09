@@ -23,6 +23,7 @@ export default function UserManagement() {
   const [searchTerm, setSearchTerm] = useState("")
   const [roleFilter, setRoleFilter] = useState("all")
   const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState<Partial<User & { password: string }>>(() => {
@@ -67,6 +68,7 @@ export default function UserManagement() {
   }, [])
 
   const fetchUsers = async () => {
+    setIsLoadingUsers(true)
     try {
       const response = await apiRequest("/api/admin/users")
 
@@ -75,9 +77,13 @@ export default function UserManagement() {
         setUsers(data)
       } else {
         console.error("Failed to fetch users")
+        setUsers([])
       }
     } catch (error) {
       console.error("Error fetching users:", error)
+      setUsers([])
+    } finally {
+      setIsLoadingUsers(false)
     }
   }
 
@@ -291,7 +297,16 @@ export default function UserManagement() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredUsers.length === 0 ? (
+              {isLoadingUsers ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-4"></div>
+                      <p className="text-gray-500 text-base">Loading users...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
                     {searchTerm || roleFilter !== "all" 
