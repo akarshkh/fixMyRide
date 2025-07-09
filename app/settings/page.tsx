@@ -167,7 +167,7 @@ function SettingsPageContent() {
     try {
       const response = await fetch('/api/settings', {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('crm_token')}`
         }
       });
       
@@ -197,7 +197,7 @@ function SettingsPageContent() {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('crm_token')}`
         },
         body: JSON.stringify(settings)
       });

@@ -25,10 +25,7 @@ const verifyToken = (req) => {
   }
   
   try {
-    return jwt.verify(token, JWT_SECRET, {
-      issuer: 'two-wheeler-crm',
-      audience: 'crm-users'
-    });
+    return jwt.verify(token, JWT_SECRET);
   } catch (error) {
     console.error('JWT verification error:', error.message);
     return null;
