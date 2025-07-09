@@ -272,35 +272,32 @@ export default function ServiceRequests() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[15%] min-w-[120px]">
                   Customer
                 </th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[12%] min-w-[100px]">
                   Vehicle
                 </th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[13%] min-w-[110px]">
                   Service Type
                 </th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[20%] min-w-[140px]">
                   Issue
                 </th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%] min-w-[80px]">
                   Priority
                 </th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[12%] min-w-[90px]">
                   Status
                 </th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Cost</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-8 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[10%] min-w-[80px]">Cost</th>
+                <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-[8%] min-w-[70px]">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredRequests.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-8 py-8 text-center text-base text-gray-500">
+                  <td colSpan={8} className="px-2 py-6 text-center text-sm text-gray-500">
                     {searchTerm || statusFilter !== "All" || priorityFilter !== "All"
                       ? "No service requests found matching your filters." 
                       : "No service requests found. Create your first service request to get started."
@@ -310,20 +307,28 @@ export default function ServiceRequests() {
               ) : (
                 filteredRequests.map((request) => (
                   <tr key={request._id} className="hover:bg-gray-50">
-                    <td className="px-8 py-5 whitespace-nowrap text-base font-medium text-gray-900">
-                      {request.customerName}
+                    <td className="px-2 py-4 text-sm font-medium text-gray-900">
+                      <div className="truncate" title={request.customerName}>
+                        {request.customerName}
+                      </div>
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
-                      {request.vehicle}
+                    <td className="px-2 py-4 text-sm text-gray-500">
+                      <div className="truncate" title={request.vehicle}>
+                        {request.vehicle}
+                      </div>
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
-                      {request.serviceType}
+                    <td className="px-2 py-4 text-sm text-gray-500">
+                      <div className="truncate" title={request.serviceType}>
+                        {request.serviceType}
+                      </div>
                     </td>
-                    <td className="px-8 py-5 text-base text-gray-500 max-w-xs truncate">
-                      {request.issue}
+                    <td className="px-2 py-4 text-sm text-gray-500">
+                      <div className="truncate" title={request.issue}>
+                        {request.issue}
+                      </div>
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap">
-                      <span className={`px-3 py-1 text-sm rounded-full font-semibold ${
+                    <td className="px-2 py-4">
+                      <span className={`px-1.5 py-0.5 text-xs rounded-full font-semibold whitespace-nowrap ${
                         request.priority === 'Urgent' ? 'bg-red-100 text-red-800' :
                         request.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
                         request.priority === 'Low' ? 'bg-gray-100 text-gray-800' :
@@ -332,33 +337,32 @@ export default function ServiceRequests() {
                         {request.priority || 'Medium'}
                       </span>
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap">
-                      <span className={`px-3 py-1 text-sm rounded-full font-semibold ${getStatusColor(request.status)}`}>
+                    <td className="px-2 py-4">
+                      <span className={`px-1.5 py-0.5 text-xs rounded-full font-semibold whitespace-nowrap ${getStatusColor(request.status)}`}>
                         {request.status}
                       </span>
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base font-medium text-green-600">
-                      {formatCurrency(request.cost)}
+                    <td className="px-2 py-4 text-sm font-medium text-green-600">
+                      <div className="truncate">
+                        {formatCurrency(request.cost)}
+                      </div>
                     </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
-                      {new Date(request.createdAt || "").toLocaleDateString("en-IN")}
-                    </td>
-                    <td className="px-8 py-5 whitespace-nowrap text-base text-gray-500">
-                      <div className="flex space-x-3">
+                    <td className="px-2 py-4 text-sm text-gray-500">
+                      <div className="flex space-x-1 justify-center">
                         <button 
                           onClick={() => handleEdit(request)}
-                          className="p-2 text-blue-600 hover:text-blue-900 hover:bg-blue-100 rounded-md transition-colors"
+                          className="p-1 text-blue-600 hover:text-blue-900 hover:bg-blue-100 rounded-md transition-colors"
                           title="Edit Request"
                         >
-                          <Edit className="h-5 w-5" />
+                          <Edit className="h-3.5 w-3.5" />
                         </button>
                         {["admin", "manager"].includes(user?.role || "") && (
                           <button 
                             onClick={() => handleDelete(request._id!)}
-                            className="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-md transition-colors"
+                            className="p-1 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-md transition-colors"
                             title="Delete Request"
                           >
-                            <Trash2 className="h-5 w-5" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </button>
                         )}
                       </div>
