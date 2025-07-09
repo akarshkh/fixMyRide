@@ -165,39 +165,6 @@ router.put('/business', authenticateToken, async (req, res) => {
   }
 });
 
-// PUT /api/settings/notifications - Update notification settings
-router.put('/notifications', authenticateToken, async (req, res) => {
-  try {
-    const { emailNotifications } = req.body;
-    
-    let settings = await Settings.findOne();
-    
-    if (!settings) {
-      settings = new Settings();
-    }
-    
-    if (emailNotifications !== undefined) {
-      settings.emailNotifications = { ...settings.emailNotifications, ...emailNotifications };
-    }
-    
-    await settings.save();
-
-    res.json({
-      success: true,
-      message: 'Notification settings updated successfully',
-      data: {
-        emailNotifications: settings.emailNotifications
-      }
-    });
-  } catch (error) {
-    console.error('Error updating notification settings:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Server error while updating notification settings'
-    });
-  }
-});
-
 // PUT /api/settings/system - Update system settings (admin only)
 router.put('/system', authenticateToken, async (req, res) => {
   try {

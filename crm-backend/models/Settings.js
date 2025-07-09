@@ -37,12 +37,6 @@ const settingsSchema = new mongoose.Schema({
     default: '₹'
   },
   
-  // Notification Settings
-  emailNotifications: {
-    newCustomer: { type: Boolean, default: true },
-    serviceCompleted: { type: Boolean, default: true },
-    appointmentReminders: { type: Boolean, default: true }
-  },
   
   // Service Settings  
   serviceSettings: {

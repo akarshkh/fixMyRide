@@ -44,11 +44,6 @@ interface WorkingHours {
   };
 }
 
-interface EmailNotifications {
-  newCustomer: boolean;
-  serviceCompleted: boolean;
-  appointmentReminders: boolean;
-}
 
 interface SettingsData {
   _id?: string;
@@ -59,7 +54,6 @@ interface SettingsData {
   workingHours: WorkingHours;
   currency: string;
   taxRate: number;
-  emailNotifications: EmailNotifications;
   serviceSettings: {
     defaultServiceDuration: number;
     allowOnlineBooking: boolean;
@@ -91,11 +85,6 @@ const defaultSettings: SettingsData = {
   },
   currency: 'INR',
   taxRate: 18,
-  emailNotifications: {
-    newCustomer: true,
-    serviceCompleted: true,
-    appointmentReminders: true
-  },
   serviceSettings: {
     defaultServiceDuration: 60,
     allowOnlineBooking: true,
@@ -261,14 +250,10 @@ export default function SettingsPage() {
 
       {/* Settings Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="business" className="flex items-center gap-2">
             <Building className="w-4 h-4" />
             Business
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center gap-2">
-            <Bell className="w-4 h-4" />
-            Notifications
           </TabsTrigger>
           <TabsTrigger value="services" className="flex items-center gap-2">
             <Clock className="w-4 h-4" />

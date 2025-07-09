@@ -2,7 +2,6 @@
 
 import { LogOut, User, Settings } from "lucide-react"
 import { useAuth } from "./auth-context"
-import Notifications from "./notifications"
 
 export default function Header() {
   const { user, logout } = useAuth()
@@ -33,8 +32,6 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Notifications */}
-          <Notifications />
           
           {/* Settings Button */}
           <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">

@@ -55,7 +55,7 @@ if (customerName && customerPhone) {
     const newCustomer = new Customer({
       name: customerName.trim(),
       phone: customerPhone.trim(),
-      email: `${customerName.toLowerCase().replace(/\s+/g, '')}@example.com`,
+      email: `${customerName.toLowerCase().replace(/\s+/g, '')}@customer.fixmyride.com`,
       vehicleModel: requestData.vehicle || 'Unknown Vehicle',
       visitCount: 1,
       lastServiceDate: new Date(),
