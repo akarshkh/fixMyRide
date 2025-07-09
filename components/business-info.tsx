@@ -32,6 +32,7 @@ interface BusinessInfo {
 interface BusinessInfoProps {
   compact?: boolean
   showWorkingHours?: boolean
+  customerFacing?: boolean
   className?: string
 }
 

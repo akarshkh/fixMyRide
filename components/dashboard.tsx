@@ -3,7 +3,6 @@
 import { Users, Clock, Calendar, TrendingUp } from "lucide-react"
 import { useState, useEffect } from "react"
 import { API_BASE_URL, getAuthHeaders } from "../lib/api"
-import BusinessInfo from "./business-info"
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -106,19 +105,11 @@ export default function Dashboard() {
         })}
       </div>
 
-      {/* Business Info and Recent Activities */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Business Information */}
-        <div className="lg:col-span-1">
-          <BusinessInfo showWorkingHours={true} />
+      {/* Recent Activities */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Recent Activities</h2>
         </div>
-        
-        {/* Recent Activities */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-md">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Recent Activities</h2>
-            </div>
         <div className="p-6">
           <div className="space-y-4">
             {recentActivities.length === 0 ? (
@@ -139,8 +130,6 @@ export default function Dashboard() {
                 </div>
               ))
             )}
-          </div>
-        </div>
           </div>
         </div>
       </div>
