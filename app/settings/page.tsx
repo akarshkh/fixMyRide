@@ -43,47 +43,8 @@ interface BusinessAddress {
 export default function SettingsPage() {
   return (
     <AuthProvider>
-      <SettingsPageWrapper />
+      <SettingsPageContent />
     </AuthProvider>
-  );
-}
-
-function SettingsPageWrapper() {
-  const { user, login, isLoading, error } = useAuth();
-
-  // Show login page if user is not authenticated
-  if (!user) {
-    return <Login onLogin={login} isLoading={isLoading} error={error} />;
-  }
-
-  // Check if user has admin role to access settings
-  if (user.role !== 'admin') {
-    return (
-      <div className="flex min-h-screen bg-gray-100">
-        <Sidebar activeSection="settings" setActiveSection={() => {}} />
-        <div className="flex-1 flex flex-col ml-64">
-          <Header />
-          <main className="flex-1 p-8 mt-20">
-            <div className="text-center py-20">
-              <h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
-              <p className="text-gray-600">You need admin privileges to access system settings.</p>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex min-h-screen bg-gray-100">
-      <Sidebar activeSection="settings" setActiveSection={() => {}} />
-      <div className="flex-1 flex flex-col ml-64">
-        <Header />
-        <main className="flex-1 p-8 mt-20">
-          <SettingsPageContent />
-        </main>
-      </div>
-    </div>
   );
 }
 
@@ -151,7 +112,12 @@ function SettingsPageContent() {
   const [hasChanges, setHasChanges] = useState(false);
   const [activeTab, setActiveTab] = useState('business');
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, login, isLoading: authLoading, error } = useAuth();
+
+  // Show login page if user is not authenticated
+  if (!user) {
+    return <Login onLogin={login} isLoading={authLoading} error={error} />
+  }
 
   useEffect(() => {
     fetchSettings();
@@ -259,16 +225,21 @@ function SettingsPageContent() {
   }
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Settings className="w-8 h-8" />
-            System Settings
-          </h1>
-          <p className="text-gray-600 mt-1">Manage your CRM system configuration</p>
-        </div>
+    <div className="flex min-h-screen bg-gray-100">
+      <Sidebar activeSection="settings" setActiveSection={() => {}} />
+      <div className="flex-1 flex flex-col ml-64">
+        <Header />
+        <main className="flex-1 p-8 mt-20">
+          <div className="max-w-6xl mx-auto">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h1 className="text-3xl font-bold flex items-center gap-2">
+                  <Settings className="w-8 h-8" />
+                  System Settings
+                </h1>
+                <p className="text-gray-600 mt-1">Manage your CRM system configuration</p>
+              </div>
         
         <div className="flex items-center gap-2">
           {hasChanges && (
