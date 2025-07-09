@@ -491,12 +491,19 @@ app.get("/api/debug/users", async (req, res) => {
 
 // Service Request Routes are now handled by modular routes
 
-// Dashboard Stats Route (require authentication)
+// Dashboard Stats Route (require authentication) - with real percentage calculations
 app.get("/api/dashboard/stats", authenticateToken, async (req, res) => {
   try {
+    // Get date ranges for current and previous periods
+    const now = new Date()
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+    const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const previousMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0)
+
+    // Current period stats
     const totalCustomers = await Customer.countDocuments()
     const activeRequests = await ServiceRequest.countDocuments({
-      status: "Pending",
+      status: { $in: ["Pending", "In Progress"] },
     })
     const completedRequests = await ServiceRequest.countDocuments({
       status: "Completed",
@@ -508,6 +515,66 @@ app.get("/api/dashboard/stats", authenticateToken, async (req, res) => {
       { $group: { _id: null, total: { $sum: "$cost" } } },
     ])
     const totalRevenue = revenueResult.length > 0 ? revenueResult[0].total : 0
+
+    // Previous period stats for comparison
+    const previousCustomers = await Customer.countDocuments({
+      createdAt: { $gte: previousMonthStart, $lte: previousMonthEnd }
+    })
+    const previousCompletedRequests = await ServiceRequest.countDocuments({
+      status: "Completed",
+      createdAt: { $gte: previousMonthStart, $lte: previousMonthEnd }
+    })
+    const previousActiveRequests = await ServiceRequest.countDocuments({
+      status: { $in: ["Pending", "In Progress"] },
+      createdAt: { $gte: previousMonthStart, $lte: previousMonthEnd }
+    })
+    const previousRevenueResult = await ServiceRequest.aggregate([
+      { 
+        $match: { 
+          status: "Completed",
+          createdAt: { $gte: previousMonthStart, $lte: previousMonthEnd }
+        }
+      },
+      { $group: { _id: null, total: { $sum: "$cost" } } },
+    ])
+    const previousRevenue = previousRevenueResult.length > 0 ? previousRevenueResult[0].total : 0
+
+    // Current month stats
+    const currentCustomers = await Customer.countDocuments({
+      createdAt: { $gte: currentMonthStart }
+    })
+    const currentCompletedRequests = await ServiceRequest.countDocuments({
+      status: "Completed",
+      createdAt: { $gte: currentMonthStart }
+    })
+    const currentActiveRequests = await ServiceRequest.countDocuments({
+      status: { $in: ["Pending", "In Progress"] },
+      createdAt: { $gte: currentMonthStart }
+    })
+    const currentRevenueResult = await ServiceRequest.aggregate([
+      { 
+        $match: { 
+          status: "Completed",
+          createdAt: { $gte: currentMonthStart }
+        }
+      },
+      { $group: { _id: null, total: { $sum: "$cost" } } },
+    ])
+    const currentRevenue = currentRevenueResult.length > 0 ? currentRevenueResult[0].total : 0
+
+    // Calculate percentage changes
+    const calculatePercentageChange = (current, previous) => {
+      if (previous === 0) return current > 0 ? '+100' : '0'
+      const change = ((current - previous) / previous) * 100
+      return change >= 0 ? `+${Math.round(change)}` : `${Math.round(change)}`
+    }
+
+    const percentageChanges = {
+      customers: calculatePercentageChange(currentCustomers, previousCustomers),
+      activeRequests: calculatePercentageChange(currentActiveRequests, previousActiveRequests),
+      completedRequests: calculatePercentageChange(currentCompletedRequests, previousCompletedRequests),
+      revenue: calculatePercentageChange(currentRevenue, previousRevenue)
+    }
 
     // Get recent activities
     const recentActivities = await ServiceRequest.find()
@@ -531,8 +598,10 @@ app.get("/api/dashboard/stats", authenticateToken, async (req, res) => {
       completedRequests,
       totalRevenue,
       recentActivities: formattedActivities,
+      percentageChanges // Include real percentage changes
     })
   } catch (error) {
+    console.error("❌ Dashboard stats error:", error)
     res.status(500).json({ error: error.message })
   }
 })

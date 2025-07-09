@@ -145,7 +145,7 @@ export default function Reports() {
               <p className="text-2xl font-bold text-gray-900">
                 {formatCurrency(dashboardStats.totalRevenue)}
               </p>
-              <p className="text-sm text-green-600">+15% from last period</p>
+              <p className="text-sm text-green-600">{dashboardStats.percentageChanges?.revenue || '0'}% from last period</p>
             </div>
             <div className="bg-green-500 p-3 rounded-full">
               <TrendingUp className="h-6 w-6 text-white" />
@@ -160,7 +160,7 @@ export default function Reports() {
               <p className="text-2xl font-bold text-gray-900">
                 {dashboardStats.totalCustomers}
               </p>
-              <p className="text-sm text-blue-600">+8% from last period</p>
+              <p className="text-sm text-blue-600">{dashboardStats.percentageChanges?.customers || '0'}% from last period</p>
             </div>
             <div className="bg-blue-500 p-3 rounded-full">
               <Users className="h-6 w-6 text-white" />
@@ -175,7 +175,7 @@ export default function Reports() {
               <p className="text-2xl font-bold text-gray-900">
                 {dashboardStats.completedRequests}
               </p>
-              <p className="text-sm text-purple-600">+12% from last period</p>
+              <p className="text-sm text-purple-600">{dashboardStats.percentageChanges?.completedRequests || '0'}% from last period</p>
             </div>
             <div className="bg-purple-500 p-3 rounded-full">
               <Wrench className="h-6 w-6 text-white" />

@@ -10,6 +10,12 @@ export default function Dashboard() {
     activeRequests: 0,
     completedRequests: 0,
     totalRevenue: 0,
+    percentageChanges: {
+      customers: '0',
+      activeRequests: '0',
+      completedRequests: '0',
+      revenue: '0'
+    }
   })
   const [recentActivities, setRecentActivities] = useState([])
 
@@ -38,6 +44,12 @@ export default function Dashboard() {
           activeRequests: data.activeRequests,
           completedRequests: data.completedRequests,
           totalRevenue: data.totalRevenue,
+          percentageChanges: data.percentageChanges || {
+            customers: '0',
+            activeRequests: '0',
+            completedRequests: '0',
+            revenue: '0'
+          }
         })
         setRecentActivities(data.recentActivities || [])
       }
@@ -52,28 +64,28 @@ export default function Dashboard() {
       value: stats.totalCustomers.toString(),
       icon: Users,
       color: "bg-blue-500",
-      change: "+12%",
+      change: `${stats.percentageChanges?.customers || '0'}%`,
     },
     {
       title: "Active Requests",
       value: stats.activeRequests.toString(),
       icon: Clock,
       color: "bg-orange-500",
-      change: "+5%",
+      change: `${stats.percentageChanges?.activeRequests || '0'}%`,
     },
     {
       title: "Completed Requests",
       value: stats.completedRequests.toString(),
       icon: Calendar,
       color: "bg-green-500",
-      change: "+2%",
+      change: `${stats.percentageChanges?.completedRequests || '0'}%`,
     },
     {
       title: "Total Revenue",
       value: formatCurrency(stats.totalRevenue),
       icon: TrendingUp,
       color: "bg-purple-500",
-      change: "+18%",
+      change: `${stats.percentageChanges?.revenue || '0'}%`,
     },
   ]
 
