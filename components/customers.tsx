@@ -60,8 +60,8 @@ export default function Customers() {
     setIsLoadingCustomers(true)
     try {
       // Create a promise that resolves after minimum loading time
-      // Increased for Vercel-Render deployment (cold start + network latency)
-      const minLoadingTime = new Promise(resolve => setTimeout(resolve, 12000)) // 12 seconds minimum
+      // Reasonable timeout for Vercel-Render deployment
+      const minLoadingTime = new Promise(resolve =e setTimeout(resolve, 5000)) // 5 seconds minimum
       
       const apiPromise = apiRequest("/api/customers")
       

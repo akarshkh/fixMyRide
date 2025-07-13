@@ -62,8 +62,8 @@ export default function ServiceRequests() {
     setIsLoadingRequests(true)
     try {
       // Create a promise that resolves after minimum loading time
-      // Increased for Vercel-Render deployment (cold start + network latency)
-      const minLoadingTime = new Promise(resolve => setTimeout(resolve, 10000)) // 10 seconds minimum
+      // Reasonable timeout for Vercel-Render deployment
+      const minLoadingTime = new Promise(resolve => setTimeout(resolve, 4000)) // 4 seconds minimum
       
       const apiPromise = apiRequest("/api/service-requests")
       

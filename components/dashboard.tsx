@@ -36,8 +36,8 @@ export default function Dashboard() {
     setIsLoading(true)
     try {
       // Create a promise that resolves after minimum loading time
-      // Increased for Vercel-Render deployment (cold start + network latency)
-      const minLoadingTime = new Promise(resolve => setTimeout(resolve, 8000)) // 8 seconds minimum
+      // Reasonable timeout for Vercel-Render deployment
+      const minLoadingTime = new Promise(resolve => setTimeout(resolve, 3000)) // 3 seconds minimum
       
       const fetchPromise = fetch(`${API_BASE_URL}/api/dashboard/stats`, {
         headers: getAuthHeaders(),
