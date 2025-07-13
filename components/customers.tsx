@@ -59,7 +59,14 @@ export default function Customers() {
   const fetchCustomers = async () => {
     setIsLoadingCustomers(true)
     try {
-      const response = await apiRequest("/api/customers")
+      // Create a promise that resolves after minimum loading time
+      // Increased for Vercel-Render deployment (cold start + network latency)
+      const minLoadingTime = new Promise(resolve => setTimeout(resolve, 12000)) // 12 seconds minimum
+      
+      const apiPromise = apiRequest("/api/customers")
+      
+      // Wait for both the API call and minimum loading time
+      const [response] = await Promise.all([apiPromise, minLoadingTime])
 
       if (response.ok) {
         const data = await response.json()

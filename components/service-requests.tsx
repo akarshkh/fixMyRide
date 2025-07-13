@@ -61,7 +61,14 @@ export default function ServiceRequests() {
   const fetchServiceRequests = async () => {
     setIsLoadingRequests(true)
     try {
-      const response = await apiRequest("/api/service-requests")
+      // Create a promise that resolves after minimum loading time
+      // Increased for Vercel-Render deployment (cold start + network latency)
+      const minLoadingTime = new Promise(resolve => setTimeout(resolve, 10000)) // 10 seconds minimum
+      
+      const apiPromise = apiRequest("/api/service-requests")
+      
+      // Wait for both the API call and minimum loading time
+      const [response] = await Promise.all([apiPromise, minLoadingTime])
       
       if (response.ok) {
         const data = await response.json()

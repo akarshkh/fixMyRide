@@ -35,9 +35,16 @@ export default function Dashboard() {
   const fetchDashboardStats = async () => {
     setIsLoading(true)
     try {
-      const response = await fetch(`${API_BASE_URL}/api/dashboard/stats`, {
+      // Create a promise that resolves after minimum loading time
+      // Increased for Vercel-Render deployment (cold start + network latency)
+      const minLoadingTime = new Promise(resolve => setTimeout(resolve, 8000)) // 8 seconds minimum
+      
+      const fetchPromise = fetch(`${API_BASE_URL}/api/dashboard/stats`, {
         headers: getAuthHeaders(),
       })
+      
+      // Wait for both the API call and minimum loading time
+      const [response] = await Promise.all([fetchPromise, minLoadingTime])
 
       if (response.ok) {
         const data = await response.json()
